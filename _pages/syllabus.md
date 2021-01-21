@@ -58,7 +58,9 @@ Class participation, Homework, and (potentially) Project
     * Robbins-Monro algorithm
     * Momentum acceleration
   * Hamiltonian Monte Carlo
-  <!-- * Sketched Newton's method, Ref: https://arxiv.org/pdf/1505.02250.pdf -->
+  <!--
+  Sketched Newton's method, Ref: https://arxiv.org/pdf/1505.02250.pdf
+  -->
 
 #### Statistical software designs (Time allowing)
   * General purpose vs focused
@@ -67,28 +69,28 @@ Class participation, Homework, and (potentially) Project
     * Example: building Bayesian hierarchical model and Gibbs sampler one step at a time
   * Tuning algorithm parameters
     <!--
-    * Do users a favor and provide defaults
-    * Empirical calibration
+    Do users a favor and provide defaults
+    Empirical calibration
     -->
       * Example: stochastic optimization of Metropolis acceptance rate
   * Cross-platform portability
   * User-friendly features
     <!--
     (Discussion based lectures?)
-    * Allow specifying a max number of iterations
-    * Through useful warnings and errors
-    * Report progress
+    Allow specifying a max number of iterations
+    Through useful warnings and errors
+    Report progress
     -->
 
 #### Essentials for statistical software developer / contributor (Maybe)
   * Software licensing
     * Permissive vs copy left / viral
     <!--
-    * Different conditions in a nutshell:
-      * Give me credits
-      * You can't sue me
-      * State changes. (This sounds reasonable, but gets rather annoying quickly, so don't ask this if possible.)
-      * You are stuck with the same license if you wanna use me
+    Different conditions in a nutshell:
+      Give me credits
+      You can't sue me
+      State changes. (This sounds reasonable, but gets rather annoying quickly, so don't ask this if possible.)
+      You are stuck with the same license if you wanna use me
     -->
   * Tools of the trade:
     * Visual diff
