@@ -59,7 +59,7 @@ plugins:
 
 author:
   name   : "Instructor: Aki Nishimura"
-  avatar : "/assets/images/bio-photo.jpg"
+  avatar : "/assets/images/instructor.jpg"
   bio    : "Time and Location: TBD"
   links:
     # - label: "Website"
