@@ -1,5 +1,7 @@
 ---
 permalink: /about/
+redirect_from:
+  - /
 title: "Performant Statistical Computing and Algo-ware Development"
 ---
 
