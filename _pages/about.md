@@ -2,7 +2,7 @@
 permalink: /about/
 redirect_from:
   - /
-title: "Performant Statistical Computing and Algo-ware Development"
+title: "Performant Statistical Computing and Algo-ware Development (Biostatistics 140.850)"
 ---
 
 Computational statistics plays a central role in extracting meaningful insights from increasingly large and complex data in modern applications.
