@@ -19,7 +19,7 @@ Class participation, Homework, and (potentially) Project
     - Example: unit-test your log-likelihood and gradient derivation --- how close the numerical gradient can be to the exact one?
   * Dealing with ill-conditioned matrices
     - Example: Gaussian process regression, sparse regression, etc --- what to do when Cholesky fails (SVD, preconditioning, or what?).
-  * Failure of Gram-Schmidt orthogonalization
+  * Intro to iterative methods & numerical issues to watch out for
     - Example: principal component analysis using inverse covariance matrix --- re-orthogonalized Lanczos algorithm for finding the smallest eigenvalue / eigenvector.
     <!--
     Algorithm 7.2 in Demmel
@@ -38,7 +38,7 @@ Class participation, Homework, and (potentially) Project
     - Sparse vs dense matrix operations
     - Masking to avoid branching in for-loop
   * Parallel computing:
-    * Shared memory vs. embarassing parallelism
+    * Shared memory vs. embarrassing parallelism
     * Instruction-level parallelism
     * Example: tale of laptop beating a cluster with 128 CPUs
     <!--
@@ -53,7 +53,7 @@ Class participation, Homework, and (potentially) Project
   * Preprocessing design matrices
     * Example: Cox model, propensity score matched / stratified regression
 
-#### Algorithms for large scale data:
+#### Algorithms for large scale data (if time allows)
   * Stochastic gradient descent
     * Robbins-Monro algorithm
     * Momentum acceleration
@@ -62,7 +62,7 @@ Class participation, Homework, and (potentially) Project
   Sketched Newton's method, Ref: https://arxiv.org/pdf/1505.02250.pdf
   -->
 
-#### Statistical software designs (Time allowing)
+#### Statistical software designs (if enough interest from audience)
   * General purpose vs focused
     * Example: Stan vs glmnet (or BayesBridge)
   * Start small and keep it extensible / maintainable
@@ -82,7 +82,7 @@ Class participation, Homework, and (potentially) Project
     Report progress
     -->
 
-#### Essentials for statistical software developer / contributor (Maybe)
+#### Essentials for statistical software developer / contributor (if enough interest from audience)
   * Software licensing
     * Permissive vs copy left / viral
     <!--
