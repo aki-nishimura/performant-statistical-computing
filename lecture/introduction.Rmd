@@ -1,0 +1,19 @@
+---
+title: "Introduction to Performant Computing and Statistical Algoware"
+subtitle: "where statistical computing, algorithm, and software meets"
+author: "Aki Nishimura"
+date: "`r Sys.Date()`"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      countIncrementalSlides: false
+---
+
+# Header
+One slide.
+
+---
+
+Another slide.
