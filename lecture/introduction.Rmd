@@ -1,5 +1,5 @@
 ---
-title: "Introduction to Performant Computing and Statistical Algoware"
+title: "Performant Statistical Computing and Algoware Development"
 subtitle: "where statistical computing, algorithm, and software meets"
 author: "Aki Nishimura"
 date: "`r Sys.Date()`"
@@ -13,14 +13,110 @@ output:
 
 <style type="text/css">
 .remark-slide-content {
-    font-size: 28px;
+    font-size: 26px;
     padding: 1em 4em 1em 4em;
 }
 </style>
 
-# Header
-One slide.
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  CommonHTML: {
+    scale: 90
+  }
+});
+</script>
+
+# What's wrong with Statistics
+
+How long does matrix multiplication take in base R?
+
+```{r, eval=FALSE}
+n <- 4096L
+A <- matrix(rnorm(n * n), nrow = n, ncol = n)
+B <- matrix(rnorm(n * n), nrow = n, ncol = n)
+system.time(A %*% B)
+```
+
+```{python, eval=FALSE}
+import numpy as np
+n = 4096
+A = np.random.randn(n, n)
+B = np.random.randn(n, n)
+%timeit A.dot(B)
+```
+
+---
+# What's wrong with Statistics
+
+```{r, eval=FALSE}
+n_obs <- 1e6
+n_pred <- 1e3
+density <- .01
+n_entry <- as.integer(n_obs * n_pred)
+n_nonzero <- as.integer(n_entry * density)
+row_index <- sample.int(n_obs, n_nonzero)
+
+```
+
 
 ---
 
-Another slide.
+
+
+# Words from Joel Spolsky, <br> $\qquad$co-founder of Stack Overflow
+
+.center[
+_"Nobody would be surprised if you told them it was hard to do open heart surgery. OK, fine, so maybe software isn't open heart surgery. But it has about the same number of moving parts, it's probably just as complicated, and it's critical in a different way._
+
+_But there's something weird about designing software specifically: Everybody thinks they know how to do it, even when they have no training. They just think, Oh sure, I can do that!"_
+]
+
+---
+
+# Floating point numbers
+
+Example: 64-bits double-precision number
+
+```{r, echo=FALSE, eval=TRUE, fig.retina=1}
+knitr::include_graphics("figure/double_precision_number.png")
+```
+
+52-bits fraction:<br>
+$\qquad$ 10110... = 1/2 + 0/4 + 1/8 + 1/16 + 0/32 + ...
+
+```{r, eval=TRUE}
+c((1 + 2^(-52)) - 1, 
+  (1 + 2^(-53)) - 1)
+```
+
+---
+
+# Floating point numbers
+
+Example: 64-bits double-precision number
+
+```{r, echo=FALSE, eval=TRUE, fig.retina=1}
+knitr::include_graphics("figure/double_precision_number.png")
+```
+
+11-bits exponent:<br>
+$\qquad$ $2^{11} = 2048$, covering −1022 to +1023
+
+```{r, eval=TRUE}
+c(2^(1023), 2^(1024), 2^(-1022 - 52), 2^(-1023 - 52))
+```
+
+---
+
+# Floating point numbers
+
+Example: 64-bits double-precision number
+
+```{r, eval=TRUE}
+c(.Machine$double.xmax, .Machine$double.eps)
+```
+
+```{r, eval=TRUE}
+log(.Machine$double.xmax)
+c(exp(709), exp(710))
+```
