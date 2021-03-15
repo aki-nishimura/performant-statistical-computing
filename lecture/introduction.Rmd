@@ -5,26 +5,12 @@ author: "Aki Nishimura"
 date: "`r Sys.Date()`"
 output:
   xaringan::moon_reader:
+    css: ["default", "default-fonts", "extra.css"]
     lib_dir: libs
     nature:
       highlightStyle: github
       countIncrementalSlides: false
 ---
-
-<style type="text/css">
-.remark-slide-content {
-    font-size: 26px;
-    padding: 1em 4em 1em 4em;
-}
-</style>
-
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-  CommonHTML: {
-    scale: 90
-  }
-});
-</script>
 
 # What's wrong with Statistics
 
