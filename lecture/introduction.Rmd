@@ -14,9 +14,20 @@ output:
       before_body: mathjax_config.html
 ---
 
+```{r setup, include = FALSE}
+required_packages <- c('Matrix', 'MASS')
+for (pkg in required_packages) {
+  if (!(pkg %in% rownames(installed.packages()))) {
+    install.packages(pkg)
+  }
+  library(pkg, character.only = TRUE)
+}
+source("../R/colors.R")
+```
+
 # What's wrong with Statistics
 
-How long does matrix multiplication take in base R?
+How long does matrix multiplication take in base R
 
 ```{r, eval=FALSE}
 n <- 4096L
@@ -24,6 +35,8 @@ A <- matrix(rnorm(n * n), nrow = n, ncol = n)
 B <- matrix(rnorm(n * n), nrow = n, ncol = n)
 system.time(A %*% B)
 ```
+
+... as opposed to Anaconda Python?
 
 ```{python, eval=FALSE}
 import numpy as np
@@ -34,22 +47,65 @@ B = np.random.randn(n, n)
 ```
 
 ---
+
 # What's wrong with Statistics
 
-```{r, eval=FALSE}
-n_obs <- 1e6
-n_pred <- 1e3
-density <- .01
-n_entry <- as.integer(n_obs * n_pred)
-n_nonzero <- as.integer(n_entry * density)
-row_index <- sample.int(n_obs, n_nonzero)
-
+```{r}
+n_obs <- 5
+n_pred <- 3
+n_nonzero <- 5
+col_index <- c(1, 1, 1, 2, 2, 3)
+row_index <- c(1, 3, 5, 2, 4, 1)
+sparseMatrix(i = row_index, j = col_index, x = 1)
 ```
-
 
 ---
 
+# What's wrong with Statistics
 
+```{r}
+n_obs <- 10^6
+n_pred <- 10^3
+density <- .01
+n_nonzero <- as.integer(n_obs * n_pred * density)
+```
+
+```{r, eval=FALSE}
+# Simulate sparse design matrix
+row_index <- sample.int(n_obs, n_nonzero, replace = TRUE)
+col_index <- sample.int(n_pred, n_nonzero, replace = TRUE)
+X <- sparseMatrix(i = row_index, j = col_index, x = 1)
+```
+
+--
+How much memory to store $X$ in dense format?
+
+```{r}
+memory_req_in_gigabytes <- 8 * n_obs * n_pred / 1024^3
+sprintf("Dense storage will require %.2gGB.",  memory_req_in_gigabytes)
+```
+
+---
+
+# What's wrong with Statistics
+
+```{r, eval=FALSE}
+X <- sparseMatrix(i = row_index, j = col_index, x = 1)
+
+# Simulate (completely random) survival time
+failure_time <- rexp(n_obs)
+censoring_time <- rexp(n_obs)
+observed <- rbinom(n_obs, 1, prob = .7)
+y <- data.frame(
+  time = ifelse(observed, failure_time, censoring_time),
+  status = observed
+)
+y <- as.matrix(y)
+
+glmnet(X, y, family = 'cox') # Older versions throw errors
+```
+
+---
 
 # Words from Joel Spolsky, <br> $\qquad$co-founder of Stack Overflow
 
@@ -58,6 +114,34 @@ _"Nobody would be surprised if you told them it was hard to do open heart surger
 
 _But there's something weird about designing software specifically: Everybody thinks they know how to do it, even when they have no training. They just think, Oh sure, I can do that!"_
 ]
+
+---
+class: middle
+
+# So, what's your point, dude?
+
+Software is hard (but thanks Hadley for your help).
+
+--
+
+Computing is hard (who's going to be a Hadley here?)
+
+--
+
+Statisticians don't even know what they don't know.
+
+--
+
+Statisticians' needs left out while soft/hardware evolves.
+
+--
+
+We gotta start changing this.
+
+---
+class: inverse, middle, center
+
+# Floating point arithmetic <br>in finite precision 
 
 ---
 
@@ -89,7 +173,7 @@ knitr::include_graphics("figure/double_precision_number.png")
 
 11-bits exponent:<br>
 $\qquad$ $2^{11} = 2048$, covering −1022 to +1023
-
+ 
 ```{r, eval=TRUE}
 c(2^(1023), 2^(1024), 2^(-1022 - 52), 2^(-1023 - 52))
 ```
@@ -107,4 +191,474 @@ c(.Machine$double.xmax, .Machine$double.eps)
 ```{r, eval=TRUE}
 log(.Machine$double.xmax)
 c(exp(709), exp(710))
+```
+
+---
+
+# Floating point numbers
+
+Example: multinomial logit in double-precision
+
+```{r}
+n_obs <- 5 # just to save memory
+n_pred <- 10^6
+n_category <- 3
+
+set.seed(140850)
+X <- matrix(
+  rnorm(n_obs * n_pred), 
+  n_obs, n_pred
+)
+reg_coef <- matrix(
+  rnorm(n_pred * n_category), 
+  n_pred, n_category
+)
+
+log_category_prob <- as.vector(X[1, ] %*% reg_coef)
+category_prob <- exp(log_category_prob) / sum(exp(log_category_prob))
+category_prob
+```
+
+---
+
+# Floating point numbers
+
+Example: multinomial logit in double-precision
+
+```{r}
+n_obs <- 5 # just to save memory
+n_pred <- 10^6
+n_category <- 3
+
+set.seed(140850)
+X <- matrix(
+  rnorm(n_obs * n_pred), 
+  n_obs, n_pred
+)
+reg_coef <- matrix(
+  rnorm(n_pred * n_category), 
+  n_pred, n_category
+)
+
+log_category_prob <- as.vector(X[1, ] %*% reg_coef)
+category_prob <- exp(log_category_prob) / sum(exp(log_category_prob))
+log_category_prob
+```
+
+---
+
+# Floating point numbers
+
+## Example: accuracy of numerical gradient
+
+Numerical differentiation is one practical situation in which you clearly observe an effect of finite-precision.
+
+Taylor's theorem tells us that
+$$f(x + \Delta x) = f(x) + \Delta x f'(x) + \frac{(\Delta x)^2}{2} f''(x) + \ldots.$$
+So we can approximate $f'(x)$ using the relation
+$$\frac{f(x + \Delta x) - f(x)}{\Delta x} \approx f'(x) + O(\Delta x).$$
+---
+
+# Floating point numbers
+
+## Example: accuracy of numerical gradient
+But we can do better; note that
+.small[$$f(x + \Delta x) = f(x) + \Delta x f'(x) + \frac{(\Delta x)^2}{2} f''(x) + \frac{(\Delta x)^3}{6} f'''(x) + \ldots$$]
+.small[$$f(x - \Delta x) = f(x) - \Delta x f'(x) + \frac{(\Delta x)^2}{2} f''(x) - \frac{(\Delta x)^3}{6} f'''(x) + \ldots$$]
+
+So we have 
+$$\frac{f(x + \Delta x) - f(x - \Delta x)}{2 \Delta x} \approx f'(x) + O((\Delta x)^2),$$
+which is called _centered difference approximation_.
+
+---
+
+# Floating point numbers
+
+## Example: accuracy of numerical gradient
+We can extend the idea to get higher-order estimates e.g.
+.small[$$\frac{- f(x + 2 \Delta x) + 8 f(x + \Delta x) - 8 f(x - \Delta x) + f(x - 2 \Delta x)
+  }{12 \Delta x} 
+  = f'(x) + O((\Delta x)^4).$$]
+BUT these higher-order methods aren't really practical.
+(You will find out one major reason in the homework.)
+
+**Note:** For functions with multivariate inputs, we have 
+$f(\bx + \Delta x \, \bm{e}_i) = f(\bx) + \Delta x \, \partial_i f(\bx) + \ldots$.
+
+---
+class: inverse, middle, center
+
+# (ill)conditing and numerical (in)stability
+
+---
+
+# Example: Gaussian process regression
+
+Let's first review a property of multivariate Gaussian.
+
+**Fact:** The conditional distribution of 
+$$\begin{bmatrix} \by_1 \\ \by_2 \end{bmatrix} 
+  \sim \normalDist \left(
+    \begin{bmatrix} \bm{\mu}_1 \\ \bm{\mu}_2 \end{bmatrix},
+    \begin{bmatrix} \bSigma_{11} & \bSigma_{12} \\ 
+    \bSigma_{21} & \bSigma_{22} \end{bmatrix}
+  \right)$$
+is given by
+$$\by_1 \given \by_2
+  \sim \normalDist\left( 
+    \bm{\mu}_1 + \bSigma_{12} \bSigma_{22}^{-1} (\by_2 - \bm{\mu}_2),  
+    \bSigma_{11} - \bSigma_{12} \bSigma_{22}^{-1} \bSigma_{21}
+  \right).$$
+
+---
+
+# Example: Gaussian process regression
+
+_Gaussian process_ $\, y(\bm{s}): \mathbb{R}^d \to \mathbb{R}$ is a Bayesian non-parametric prior for an unknown function.
+
+Its defining propety is that $\left( y(\bm{s}_1), \ldots, y(\bm{s}_n) \right)$ is multivariate Gaussian for any set of $\bm{s}_1, \ldots, \bm{s}_n$.
+
+```{r, echo=FALSE, eval=TRUE, out.width="100%"}
+knitr::include_graphics("figure/gp_regression_prior_posterior_prediction.png")
+```
+
+---
+
+# Example: Gaussian process regression
+
+Besides $\mu(\bm{s}) = \mathbb{E}(y(\bm{s}))$, the _covariance function_ 
+$$k(\bm{s}, \bm{s}') = \textrm{cov}(y(\bm{s}), y(\bm{s}'))$$ 
+characterizes GP's behavior.
+<!-- More formally, a covariance function is a semi-positive definite symmetric kernel. -->
+
+<p style="margin-top:3ex;"> </p>
+**Example:** Squared exponential covariance
+
+$$k(\bm{s}, \bm{s}') = \sigma^2 \prod_i \exp\left(- \frac{(s_i - s_i')^2}{2 \ell_i^2} \right)$$
+where $\ell_i$'s are _range_ parameters.
+
+???
+
+A covariance function essentially measures similarity (or inverse distance) between two points $\bm{s}$ and $\bm{s}'$.
+
+The multiplication by $\bm{\Sigma}_{12}$ is reminiscent of kernel density smoothing.
+
+<!-- Matern covariance with smoothness $\nu = 5/2$: -->
+<!-- $$k_{5/2}(r) = \left( -->
+<!--   1 + \frac{\sqrt{5} r}{\ell} + \frac{5 r^2}{3 \ell^2}\right) \exp\left(- \frac{\sqrt{5} r}{\ell}  -->
+<!-- \right)$$ -->
+<!-- Eq (4.17) in Rasmussen and Williams. -->
+
+<!-- matern_cov <- function(dist, range) { -->
+<!--   scaled_dist <- dist / range -->
+<!--   return( -->
+<!--     (1 + sqrt(5) * scaled_dist + 5 / 3 * scaled_dist^2)  -->
+<!--     * exp(- sqrt(5) * scaled_dist) -->
+<!--   ) -->
+<!-- } -->
+
+---
+
+# Example: Gaussian process regression
+
+Now let's see GP in action. First, some utility functions:
+```{r}
+sq_exp_cov <- function(dist, range) {
+  scaled_dist <- dist / range
+  return(exp(-scaled_dist^2))
+}
+#' Compute the conditional mean of `y_1` given `y_2`
+gauss_conditional_mean <- function(y_2, mu_1, mu_2, cov_12, cov_22) {
+  return(mu_1 + cov_12 %*% solve(cov_22, y_2 - mu_2))
+}
+```
+
+---
+
+# Example: Gaussian process regression
+
+Now let's see GP in action. Say we observe a function over a grid with "gap" and want to fill it in:
+
+```{r, echo=FALSE, fig.dim=c(8, 5), fig.retina=3, fig.align='center'}
+loc_obs <- c(seq(0, .4, .01), seq(.6, 1, .01))
+n_obs <- length(loc_obs)
+
+set.seed(2021)
+corr_range <- .2
+dist_obs <- as.matrix(dist(loc_obs))
+Sigma_obs <- sq_exp_cov(dist_obs, corr_range)
+y_obs <- mvrnorm(mu = rep(0, n_obs), Sigma = Sigma_obs)
+par(mar = c(4.1, 4.1, 0, 0))
+plot(loc_obs, y_obs, xlab="s", ylab="y(s)", 
+     cex=1.8, cex.lab=1.8, cex.axis=1.8, 
+     col=jhu_color$spiritBlue, frame.plot = F)
+```
+
+---
+
+# Example: Gaussian process regression
+
+Here's how we simulated a function from a GP with squared exponential covariance in the previous plot:
+
+```{r, eval=FALSE}
+sq_exp_cov <- function(dist, range) {
+  return(exp(-(dist / range)^2))
+}
+
+loc_obs <- c(seq(0, .4, .01), seq(.6, 1, .01))
+n_obs <- length(loc_obs)
+
+set.seed(2021)
+corr_range <- .2
+dist_obs <- as.matrix(dist(loc_obs))
+Sigma_obs <- sq_exp_cov(dist_obs, corr_range)
+y_obs <- mvrnorm(mu = rep(0, n_obs), Sigma = Sigma_obs)
+plot(loc_obs, y_obs)
+```
+
+---
+
+# Example: Gaussian process regression
+
+```{r wrap-error, echo=FALSE}
+error_hook <- knitr::knit_hooks$get("error")
+knitr::knit_hooks$set(error = function(x, options) {
+  if (!is.null(n <- options$linewidth)) {
+    x = knitr:::split_lines(x)
+    if (any(nchar(x) > n)) x = strwrap(x, width = n)
+    x = paste(x, collapse = '\n')
+  }
+  error_hook(x, options)
+})
+```
+
+Let's now try to interpolate the function:
+
+```{r}
+#' Compute the conditional mean of `y_1` given `y_2`
+gauss_conditional_mean <- function(y_2, mu_1, mu_2, cov_12, cov_22) {
+  return(mu_1 + cov_12 %*% solve(cov_22, y_2 - mu_2))
+}
+```
+
+---
+
+# Example: Gaussian process regression
+
+Let's now try to interpolate the function:
+
+```{r, eval=FALSE}
+loc_new <- seq(.41, .59, .01)
+n_new <- length(loc_new)
+
+dist_new <- as.matrix(dist(loc_new))
+Sigma_new <- sq_exp_cov(dist_new, corr_range)
+cross_dist <- as.matrix(dist(c(loc_new, loc_obs)))
+cross_dist <- cross_dist[1:n_new, (n_new + 1):(n_new + n_obs)]
+Sigma_cross <- sq_exp_cov(cross_dist, corr_range)
+mean_obs <- rep(0, n_obs)
+mean_new <- rep(0, n_new)
+```
+
+--
+
+Ready, set, ...
+```{r, eval=FALSE}
+y_predicted <- gauss_conditional_mean(y_obs, mean_new, mean_obs, Sigma_cross, Sigma_obs)
+```
+
+---
+
+# Example: Gaussian process regression
+
+Let's now try to interpolate the function:
+
+```{r}
+loc_new <- seq(.41, .59, .01)
+n_new <- length(loc_new)
+
+dist_new <- as.matrix(dist(loc_new))
+Sigma_new <- sq_exp_cov(dist_new, corr_range)
+cross_dist <- as.matrix(dist(c(loc_new, loc_obs)))
+cross_dist <- cross_dist[1:n_new, (n_new + 1):(n_new + n_obs)]
+Sigma_cross <- sq_exp_cov(cross_dist, corr_range)
+mean_obs <- rep(0, n_obs)
+mean_new <- rep(0, n_new)
+```
+
+Ready, set, ... go! (Oops.)
+```{r, error=TRUE, linewidth=70}
+y_predicted <- gauss_conditional_mean(y_obs, mean_new, mean_obs, Sigma_cross, Sigma_obs)
+```
+
+---
+
+# Conditioning of problem
+
+Think of a _problem_, machine implementation of which is an _algorithm_, as a map: $\, x \to f(x)$ (e.g. $\boldsymbol{x} \to \boldsymbol{A}^{-1} \boldsymbol{x}$).
+
+--
+
+**Question:** How sensitive is a problem $f(x)$ to small perturbation in the input $x$?
+
+--
+
+Measure of this sensitivity is called a _condition number_.
+
+--
+
+<p style="margin-top:4ex;"> </p>
+## Example of why we might care about this:
+* Say $\boldsymbol{x} + \boldsymbol{\delta x}$ is a machine representation of $\boldsymbol{x}$.
+* How far away is $\boldsymbol{A}^{-1} (\boldsymbol{x} + \boldsymbol{\delta x})$ from $\boldsymbol{A}^{-1} \boldsymbol{x}$?
+
+---
+
+# Condition number
+
+_Relative condition number_ is defined as
+
+$$\kappa := \lim_{\| \bdelta \bx \| \to 0} \sup_{\bdelta \bx} 
+\frac{
+  \| \bf(\bx + \bdelta \bx) - \bf(\bx) \| / \| \bf(\bx) \|
+  }{
+  \| \bdelta \bx \| / \| \bx \|
+},$$
+where $\| \bx \| = \left( \sum_i x_i^2 \right)^{1/2}$ is the $\ell^2$-norm.  
+
+We say a problem is _well-conditioned_ if $\kappa$ is small (e.g. $\kappa \lesssim 10^2$) and _ill-conditioned_ if $\kappa$ large (e.g. $\kappa \gtrsim 10^6$).
+
+In particular, when $\kappa \approx 10^{16} \approx (\text{machine prec})^{-1}$, no algorithm can guarantee a meaningful result.
+
+---
+
+# Condition number
+
+## Example of ill-conditioned problem: eigenvalues of non-symmetric matrices
+Eigenvalues of
+$\begin{bmatrix} 1 & 10^{16} \\ 0 & 1 \end{bmatrix}$ 
+are {1, 1}. 
+
+--
+
+But those of $\begin{bmatrix} 1 & 10^{16} \\ 10^{-16} & 1 \end{bmatrix}$ are {0, 2}. <br>
+$\qquad$ (To see this, note that $\lambda_1 \lambda_2 = 0$ and $\lambda_1 + \lambda_2 = 2$.)
+
+--
+
+<p style="margin-top:3ex;">
+On the other hands, the eigenvalues of a symmetric matrix are well-conditioned.
+</p>
+
+---
+
+# Condition number of a matrix
+
+**Question:** What is the condition number of a matrix-vector multiplication $\bx \to \bA \bx$?
+
+--
+
+First define the _matrix norm_ $\| \bA \| := \max_{\bm{v}} \| \bA \bm{v} \| / \| \bm{v} \|$, corresponding to the largest singular value of $\bA$.
+
+--
+<p style="margin-top:3ex;"> </p>
+Now, let's study what happens under perturbation $\bdelta \bx$:
+$$\hspace{-1.5em} \frac{
+  \| \bA(\bx + \bdelta \bx) - \bA \bx \| / \| \bA \bx \|
+  }{
+  \| \bdelta \bx \| / \| \bx \|
+} = \frac{
+  \| \bA \bdelta \bx \| / \| \bdelta \bx \|
+  }{
+  \| \bA \bx \| / \| \bx \|
+} \leq \| \bA \| \| \bA^{-1} \|.$$
+
+(The inequality follows from $\| \bA \bdelta \bx \| / \| \bdelta \bx \| \leq \| \bA \|$ 
+and $\| \bx \| / \| \bA \bx \| = \| \bA^{-1} \bA \bx \| / \| \bA \bx \| \leq \| \bA^{-1} \|$.)
+
+---
+
+# Condition number of a matrix
+
+So we have shown that 
+$$\kappa(\bx \to \bA \bx) \leq \| \bA \| \| \bA^{-1} \|.$$
+
+$\| \bA \| \| \bA^{-1} \|$ turns out to be such a fundamental quantity in numerical linear algebra that we define
+$$\kappa(\bA) := \| \bA \| \| \bA^{-1} \|.$$
+## Note:
+* $\kappa(\bA) = \kappa(\bA^{-1})$
+* $\kappa(\bA) = \sigma_{\max}(\bA) / \sigma_{\min}(\bA)$ when $\bA$ is symmetric and positive-definite, 
+<!-- Solving a linear system $\bA \bx = \bm{b}$ is one of the most common problem in statistical/scientific computing. -->
+
+<!-- **Question:** How acurate can $\bx = \bA^{-1} \bm{b}$ be? -->
+---
+
+# When matrix becomes ill-conditioned
+
+Remember that malicious error?
+
+```{r, error=TRUE, linewidth=70}
+y_predicted <- gauss_conditional_mean(y_obs, mean_new, mean_obs, Sigma_cross, Sigma_obs)
+```
+
+This is caused by the ill-conditioned covariance matrix: 
+
+```{r}
+kappa(Sigma_obs)
+```
+
+---
+
+# Accuracy of linear algebra algorithms
+
+Good algorithms for solving ${\bA \bx = \bm{b}}$ for ${\bx}$  satisfies
+$$\newcommand{\algOutputMarker}[1]{\widetilde{#1}}
+  \frac{\| \algOutputMarker{\bx} - \bx \|}{\| \bx \|} \, = \mathcal{O}(\kappa(\bA) \epsilon_{\textrm{machine}})$$
+where $\epsilon_{\textrm{machine}} \approx 10^{-16}$ (for most practical purposes).
+<!-- See Section 13 of Trefethen for a precise definition of machine epsilon. -->
+
+## Example: Solving $\small{\bm{X} \bm{\beta} = \bm{y}}\,$ for $\small{\bm{\beta}}\,$ via QR-decomposition
+<!-- Assuming, say, Householder triangulation for QR-decomposition. -->
+* First compute an orthogonal matrix $\bm{Q}$ and upper triangular matrix $\bm{R}$ such that $\bm{Q} \bm{R} = \bm{X}$.
+* Then compute $\algOutputMarker{\bm{\beta}}$ as $\bm{R}^{-1} \bm{Q}^\intercal \bm{y}$.
+* This satisfies $\| \algOutputMarker{\bm{\beta}} - \bm{\beta} \| / \| \bm{\beta} \| = \mathcal{O}(\kappa(\bA) \epsilon_{\textrm{machine}})$.
+
+---
+
+# Accuracy of least-square algorithms
+
+QR-decomposition is also the standard approach for solving a least-square problem for finding
+$$\widehat{\bm{\beta}} 
+  = \arg\min_{\bm{\beta}} \|\bm{y} - \bm{X} \bm{\beta} \|^2
+  = (\bm{X}^\intercal \bm{X})^{-1} \bm{X}^\intercal \bm{y}.$$
+
+--
+
+If $\bm{X} = \bm{Q} \bm{R}$ for $\bm{Q} \in \mathbb{R}^{n \times p}$ and $\bm{R} \in \mathbb{R}^{p \times p}$, then 
+$$\widehat{\bm{\beta}} = \bm{R}^{-1} \bm{Q}^\intercal \bm{y}.$$
+
+--
+
+Numerical error in actually computing $\widehat{\bm{\beta}}$ has the order
+$$\left(
+  \kappa(\bm{X}) + \frac{\| \bm{X} \widehat{\bm{\beta}} - \bm{y} \|}{\| \bm{X} \widehat{\bm{\beta}} \|} \kappa^2(\bm{X})
+  \right) \epsilon_{\textrm{machine}}.$$
+
+---
+
+# Accuracy of least-square algorithms
+
+DON'T do
+```{r, eval=FALSE}
+beta_hat <- solve(t(X) %*% X, t(X) %*% y)
+```
+because this causes error of order $\kappa(\bm{X}^\intercal \bm{X}) = \kappa^2(\bm{X})$.
+
+--
+
+<p style="margin-top:3ex;"> </p>
+And please, pretty please, DON'T EVER do
+```{r, eval=FALSE}
+XTX_inverse <- solve(t(X) %*% X)
+beta_hat <- XTX_inverse %*% (t(X) %*% y)
 ```
