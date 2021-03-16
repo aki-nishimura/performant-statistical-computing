@@ -10,6 +10,8 @@ output:
     nature:
       highlightStyle: github
       countIncrementalSlides: false
+    includes:
+      before_body: mathjax_config.html
 ---
 
 # What's wrong with Statistics
