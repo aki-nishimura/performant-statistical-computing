@@ -9,6 +9,7 @@ output:
     lib_dir: libs
     nature:
       highlightStyle: github
+      slideNumberFormat: "%current%"
       countIncrementalSlides: false
     includes:
       before_body: mathjax_config.html
