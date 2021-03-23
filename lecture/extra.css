@@ -2,3 +2,14 @@
   font-size: 26px;
   padding: .75em 3.5em .75em 3.5em;
 }
+
+.remark-slide-content h2 {
+  font-size: 40px;
+}
+
+.small { font-size: 70% }
+
+h1 { margin-bottom: -.1ex; }
+h2 { margin-bottom: 0; }
+ul { margin-top: 1ex; }
+ul li { margin-bottom: 1ex; }
