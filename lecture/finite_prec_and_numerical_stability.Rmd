@@ -499,7 +499,7 @@ where $\epsilon_{\textrm{machine}} \approx 10^{-16}$ (for most practical purpose
 
 ## Example: Solving $\small{\bm{X} \bm{\beta} = \bm{y}}\,$ for $\small{\bm{\beta}}\,$ via QR-decomposition
 <!-- Assuming, say, Householder triangulation for QR-decomposition. -->
-* First compute an orthogonal matrix $\bm{Q}$ and upper triangular matrix $\bm{R}$ such that $\bm{Q} \bm{R} = \bm{X}$.
+* First compute an orthogonal $\bm{Q}$ (i.e. $\bm{Q}^\intercal \bm{Q} = \bm{I}$) and upper triangular matrix $\bm{R}$ such that $\bm{Q} \bm{R} = \bm{X}$.
 * Then compute $\algOutputMarker{\bm{\beta}}$ as $\bm{R}^{-1} \bm{Q}^\intercal \bm{y}$.
 * This satisfies $\| \algOutputMarker{\bm{\beta}} - \bm{\beta} \| / \| \bm{\beta} \| = \mathcal{O}(\kappa(\bA) \epsilon_{\textrm{machine}})$.
 
