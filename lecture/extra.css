@@ -1,3 +1,14 @@
+.inverse {
+  background-color: #272822;
+  color: #d6d6d6;
+  text-shadow: none;
+}
+
+.inverse h1, .inverse h2, .inverse h3 {
+  color: #f3f3f3;
+  text-shadow: none;
+}
+
 .remark-slide-content {
   font-size: 26px;
   padding: .75em 3.5em .75em 3.5em;
