@@ -1,5 +1,5 @@
 .inverse {
-  background-color: #272822;
+  background-color: #26344b; /* Take JHU Heritage blue, adjust saturation from 100 to 33 in HSL representation */
   color: #d6d6d6;
   text-shadow: none;
 }
