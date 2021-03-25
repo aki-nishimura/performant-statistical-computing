@@ -532,7 +532,7 @@ DON'T do
 ```{r, eval=FALSE}
 beta_hat <- solve(t(X) %*% X, t(X) %*% y)
 ```
-because this causes error of order $\kappa(\bm{X}^\intercal \bm{X}) = \kappa^2(\bm{X})$.
+because it guarantees error of order $\kappa(\bm{X}^\intercal \bm{X}) = \kappa^2(\bm{X})$.
 
 --
 
@@ -542,3 +542,84 @@ And please, pretty please, DON'T EVER do
 XTX_inverse <- solve(t(X) %*% X)
 beta_hat <- XTX_inverse %*% (t(X) %*% y)
 ```
+
+---
+class: inverse, middle, center
+
+# How to deal with ill-conditioned matrices
+
+---
+layout: true
+
+# Review of singular/eigen value decomp<br> and mutivariate Gaussian theory
+
+---
+
+_Singular value decomposition_ (SVD) is arguably the most versatile tool to deal with ill-conditioned matrices.<br>
+--
+(If not the most efficient for each specific situation.)
+
+--
+
+## (Important) special case: symmetric matrix $\bm{A}$
+In this case, SVD coincides with _eigenvalue decomposition_:
+$$\bm{A} = \bm{U} \bm{\Lambda} \bm{U}^\intercal$$
+where $\bm{U}$ orthogonal (i.e. $\bm{U}^\intercal \bm{U} = \bm{I}$) and $\bm{\Lambda}$ diagonal.
+
+---
+
+Eigen decomposition $\bm{A} = \bm{U} \bm{\Lambda} \bm{U}^\intercal$ is equivalent to
+$$\bm{A} = \textstyle \sum_i \lambda_i \bm{u}_i \bm{u}_i^\intercal \, \text{ for } \, \langle \bm{u}_i, \bm{u}_j \rangle = \mathbb{I}\{ i = j \},$$
+where we assume $\lambda_1 > \lambda_2 > \ldots$ as is customary.
+
+--
+
+## Eigen decomposition and principal component analysis
+
+Gaussian $\bx \sim \normalDist(\bm{\mu}, \bm{\Sigma} = \bm{U} \bm{\Lambda} \bm{U}^\intercal)$ can be expressed as
+$$\bx \overset{\small \textrm{d}}{=} \bm{\mu} + \textstyle \sum_i \lambda_i^{1/2} z_i \bm{u}_i \, \text{ for } \, z_i \iid \normalDist(0, 1).$$ 
+In other words, $\bm{u}_1, \bm{u}_2, \ldots$ are principal components.
+
+---
+layout: false
+
+# Degenerate Gaussian & ill-conditioning
+
+Multivariate Gaussian is _degenerate_ or _singular_ if
+* $\lambda_i = 0$ for $i \geq k$, or
+* $\textrm{rank}(\bm{\Sigma}) < \textrm{length}(\bx)$.
+
+--
+
+**Note:** $\kappa(\bm{\Sigma}) = \lambda_{\max} / \lambda_{\min}$, so $\kappa(\bm{\Sigma}) = \infty$ if singular.
+
+--
+
+<p style="margin-top:3ex;"> </p>
+What we encounter in practice is _near singularity_: 
+$$\lambda_{\min} \approx 0 \ \Leftrightarrow \ \kappa(\bm{\Sigma}) \approx \infty$$
+
+```{r, error=TRUE, linewidth=70}
+y_predicted <- gauss_conditional_mean(y_obs, mean_new, mean_obs, Sigma_cross, Sigma_obs)
+```
+
+---
+
+# Degenerate Gaussian & ill-conditioning
+
+When we encounter a (near-)singular matrix, we need to figure out what's the "statistically right" answer.
+
+--
+
+e.g. If $\bm{X}^\intercal \bm{X}$ is singular in linear model, let the user know that there's more parameters than data can estimate.
+
+--
+
+<p style="margin-top:3ex;"> </p>
+In case of degenerate Gaussian, an approximation
+* $\bx \overset{\small \textrm{d}}{=} \bm{\mu} + \textstyle \sum_{\color{lava}{i \leq k}} \lambda_i^{1/2} z_i \bm{u}_i$, or equivalently
+* $\bm{\Sigma} = \sum_{\color{lava}{i \leq k}} \lambda_i \bm{u}_i \bm{u}_i^\intercal$,
+
+is typically sensible.
+
+
