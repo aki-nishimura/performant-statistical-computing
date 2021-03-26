@@ -1,0 +1,321 @@
+---
+title: "Homework: finite precision arithmetic"
+output: html_notebook
+---
+
+
+```{r setup, echo=FALSE}
+rm(list = ls())
+path_to_script <- dirname(rstudioapi::getActiveDocumentContext()$path) 
+  # assuming you are using RStudio
+
+required_packages <- c('Matrix', 'testit', 'profvis')
+for (pkg in required_packages) {
+  if (!(pkg %in% rownames(installed.packages()))) {
+    install.packages(pkg)
+  }
+  library(pkg, character.only = TRUE)
+}
+
+source(file.path(path_to_script, "..", "R", "colors.R"))
+```
+
+
+# Problem 1
+Figure out what the function `determine_precision` is trying to do and fill out the missing line.
+
+```{r}
+
+are_numerically_distinguishable <- function(value1, value2) {
+  # Fill in
+}
+
+determine_precision <- function(init_upper_bound = 1) {
+  curr_upper_bound <- init_upper_bound
+  divider <- 2 
+  while (are_numerically_distinguishable(1, 1 + curr_upper_bound)) {
+    curr_upper_bound <- curr_upper_bound / divider
+  }
+  return(list(
+    lower_bd = curr_upper_bound, 
+    upper_bd = divider * curr_upper_bound
+  ))
+}
+
+prec <- determine_precision()
+print(sprintf(
+  "The precision is between %.3g and %.3g.", 
+  prec$lower_bd, prec$upper_bd
+))
+
+```
+**Remark:** R does not have a native support for single-precision numbers.
+
+
+# Problem 2
+The following problem is inspired by Hofert (2020) (https://arxiv.org/abs/2003.08009).
+Draw a large number of random variables uniformly distributed in [0, 1]. 
+In theory, no two random variables take the exact same value.
+In practice, however, there is small but positive probability of that happening because of finite precision in computer representation of real numbers.
+Count the number of duplicates in the generated pseudo random numbers.
+Does it agree with the theoretical expected value?
+If not, try coming up with possible explanations for the observed behavior (other than "Aki is an idiot --- there must be a bug in his function").
+
+```{r}
+#' Estimates the expected number of duplicates when drawing uniformly with replacement.
+est_num_expected_duplicate <- function (n_draw, n_choice) {
+  return(n_draw * (n_draw - 1) / n_choice) # First-order approx
+}
+
+n_unique_double <- 2^53 # Number of unique machine-representable values in [0, 1].
+n_draw <- 10^6
+
+# Fill in
+
+```
+
+
+# Problem 3
+You have learned in the class that the centered difference $\frac{f(x + \Delta x) - f(x - \Delta x)}{2 \Delta x}$ approximates the derivative $f'(x)$ up to an $O(\Delta x^2)$ error.
+To numerically verify this, we design the following experiment using a log of logistic function (i.e. $f(x) = \log\{ \exp(x) / (1 + \exp(x)) \}$) as an example.
+We evaluate its derivative using an analytical formula and compare it to the centered difference approximations as $\Delta x$ varies from $2^{-1}$ to $2^{-52}$.
+Plot the relative error in a log-log scale.
+What do you expect the slope of the plotted line to be?
+
+```{r}
+#' Approximate derivative via centered-difference approximation
+approximate_deriv <- function(func, x, dx) {
+  # Fill in
+}
+
+log_logistic_func <- function(x) {
+  # Fill in
+}
+
+log_logistic_deriv <- function(x) {
+  # Fill in
+}
+
+# Calculate and plot the relative errors of finite difference approximations
+set.seed(615)
+x <- rnorm(1)
+
+log2_dx <- - seq(1, 52)
+numerical_deriv <- sapply(
+  2^log2_dx, function(dx) approximate_deriv(log_logistic_func, x, dx)
+)
+analytical_deriv <- log_logistic_deriv(x)
+rel_err <- abs(
+  (analytical_deriv - numerical_deriv) / analytical_deriv
+)
+
+fontsize <- 1.2
+plot(
+  log2_dx, log2(rel_err),
+  frame = FALSE, # Remove the ugly box
+  col = jhu_color$spiritBlue,
+  xlab = "log2 stepsize for finite difference",
+  ylab = "log2 rel errors",
+  xlim = rev(range(log2_dx)),
+  cex.lab = fontsize,
+  cex.axis = fontsize,
+  type = 'l'
+)
+
+```
+Does your output agree with what you expected? 
+Explain the observed phenomenon.
+
+**Bonus question 1:** What is the slope in the "latter part" of your plotted line?
+
+**Bonus question 2:** Implement a strategy to automatically choose a near-optimal $\Delta x$ for numerically approximating the derivative of a given function via centered difference. (Hint: first get a crude estimate of $f'(x)$ and refine it at the next iteration.)
+
+
+# Problem 4
+Many state-of-the-art algorithms for statistical inference rely on the gradient of a likelihood or loss function.
+These algorithms, however, will obviously fail if you supply a wrong gradient.
+(And you wouldn't be the first one in history to have wasted your time looking for a bug in your algorithm implementation, only to realize that the bug was in your gradient calculation.)
+Taking a logistic regression with ridge penalty as a toy example, below we consider how we might ensure that our gradient calculation is correct.
+
+```{r}
+path_to_data <- file.path(path_to_script, 'data', 'InternetAd.RData') 
+  # Platform independent way of accessing a file
+load(path_to_data)
+
+n_obs <- InternetAd$x@Dim[1]
+n_pred <- InternetAd$x@Dim[2]
+```
+**Remark:** The design matrix of `InternetAd` (taken from https://www.jstatsoft.org/article/view/v033i01) is representated as a sparse matrix in the compressed, sparse, column-oriented (CSC) form. We will discuss more about sparse matrices in future lectures and homework. 
+
+## Part 1
+Use the provided `compute_logit_penalized_loglik` function and try running a gradient-free optimization algorithm from $\beta = (1, 1, ..., 1)$.
+```{r}
+compute_logit_penalized_loglik <- function(
+    reg_coef, design_mat, n_success, n_trial=NULL, penalty = 1.
+  ) {
+  if (is.null(n_trial)) {
+    # Assume binary outcome unless otherwise specified.
+    n_trial <- rep(1, length(n_success))
+  }
+  logit_prob <- design_mat %*% reg_coef
+  loglik <- sum(n_success * logit_prob - n_trial * log(1 + exp(logit_prob)))
+  penalized_loglik <- loglik - .5 * penalty * sum(reg_coef^2)
+  return(penalized_loglik)
+}
+
+compute_internet_ad_ploglik <- function(reg_coef) {
+  return(compute_logit_penalized_loglik(reg_coef, InternetAd$x, InternetAd$y))
+}
+
+
+optim_result <- optim(
+  # Fill in
+  method = 'Nelder-Mead', # gradient-free algorithm
+  control = list(fnscale = -1) # Maximize the function
+)
+
+```
+
+Oops, that didn't work --- figure out what went wrong. 
+After you figured it out, don't worry about fixing it but try starting the optimization from $\beta = (0, 0, ..., 0)$.
+It should at least run now.
+Check `optim_result$convergence` and see if we were successful in finding the penalized MLE this time.
+Write a code to call `warning` and let a user know otherwise.
+
+```{r}
+# Fill in --- let a user know if the algorithm converged or not
+```
+
+
+## Part 2
+Familialize yourself with the notion of "automated testing" (https://r-pkgs.org/tests.html).
+We won't set up automated testing here, but below you will write a function you might include in your tests when writing statistical software.
+The function should test your calculation and implementation of log-likelihood and its gradient.
+(Or rather the consistency between the two since the test won't eliminate the possibility that both likelihood and gradient are wrong.)
+
+First implement and test a function to numerically differentiate the given real-valued function.
+
+```{r}
+#' Estimate the gradient of func(x) via centered-difference approximation.
+approximate_grad <- function(func, x, dx = 10^-6) {
+  numerical_grad <- rep(0, length(x))
+  for (i in 1:length(x)) {
+    # Fill in
+  }
+  return(numerical_grad)
+}
+
+are_all_close <- function(vector1, vector2, rel_tol = 1e-3) {
+  ave_magnitude <- (abs(vector1) + abs(vector2)) / 2
+  coord_rel_err <- abs(vector1 - vector2) / ave_magnitude
+  return(all(coord_rel_err < rel_tol))
+}
+
+# Test `approximate_grad` function via a pair of simple functions calculating 
+# 1) some log-density/log-likelihood function and 2) its gradient. These functions
+# should be simple enough that, if the numerical and analytical gradients do not
+# match, the bug is more likely in `approximate_grad`.
+
+compute_logp <- function(x) {
+  # Fill in
+}
+compute_grad <- function(x) {
+  # Fill in
+}
+
+assert("Finite difference approximation coincides with analytical one", {
+  approx_grad <- approximate_grad(compute_logp, x)
+  grad <- compute_grad(x)
+  are_all_close(grad, approx_grad)
+})
+
+```
+
+Next, implement the gradient of the penalized logistic model and test it using the `approx_grad` function.
+
+```{r}
+
+compute_logit_grad <- function(
+    reg_coef, design_mat, n_success, n_trial=NULL, penalty = 1.
+  ) {
+  if (is.null(n_trial)) {
+    n_trial <- rep(1, length(n_success))
+  }
+  # Fill in
+  loglik_grad <- as.vector(loglik_grad)
+  penalty_grad <- - penalty * reg_coef
+  grad <- loglik_grad + penalty_grad
+  return(grad)
+}
+
+compute_internet_ad_grad <- function(reg_coef) {
+  return(compute_logit_grad(reg_coef, InternetAd$x, InternetAd$y))
+}
+
+set.seed(140850)
+reg_coef <- rnorm(n_pred, sd = .1)
+assert("Penalized log-likelihood and its gradient are consistent with each other", {
+  approx_grad <- approximate_grad(compute_internet_ad_ploglik, reg_coef)
+  grad <- compute_internet_ad_grad(reg_coef)
+  are_all_close(grad, approx_grad)
+})
+
+```
+
+Now that we have implemented and tested the gradient, try a gradient-based optimization algorithm to find the penalized MLE.
+Is the optimization successful this time?
+
+```{r}
+reg_coef <- rep(0., n_pred)
+optim_result <- optim(
+  reg_coef, 
+  fn = compute_internet_ad_ploglik, 
+  gr = compute_internet_ad_grad,
+  method = 'BFGS',
+  control = list(fnscale = -1) # Maximize the function
+)
+```
+
+## Part 3
+Nice job setting up a test (albeit an informal one) for your gradient calculation! 
+You can now be reasonably confident that, when your code returns an unexpected result, the issue is somewhere else.
+
+In a larger project, it's a good idea to individually test the critical components of your program.
+As you write more tests, however, you want to ensure that individual tests run reasonably quickly.
+In fact, testing gradient coordinate-wise via finite difference approximation becomes computationally burdensome as the input data becomes larger.
+An obvious solution is to test the gradient on a smaller input data.
+For a didactic purpose, however, here we explore an alternative way to test gradient more quickly.
+
+First, let's figure out where numerical differentiation can become expensive by profiling `approx_grad` function.
+
+```{r}
+func <- compute_internet_ad_ploglik
+x <- reg_coef
+dx <- 10^-6
+
+profvis({
+  # Fill in --- paste in your implementation of `approx_grad`
+})
+```
+
+Using the fact that a directional gradient of function $f$ is given by $\frac{d}{dt} f(x + tv) |_{t = 0} = \langle \nabla f, v \rangle$, implement a faster test for gradient.
+You can use the same idea to test the consistency between your calculations of gradient and of Hessian (which you would need for second-order optimization algorithms). 
+Describe how you would implement such a test (but no need to implement it).
+
+```{r}
+
+approx_directional_deriv <- function(...) {
+  # Fill in
+}
+
+set.seed(140850)
+reg_coef <- rnorm(n_pred, sd = .1)
+v <- rnorm(n_pred)
+v <- v / sqrt(sum(v^2))
+
+assertion <- ""
+assert(assertion, {
+  approx_dderiv <- approx_directional_deriv(compute_internet_ad_ploglik, reg_coef, v)
+  # Fill in
+})
+```
