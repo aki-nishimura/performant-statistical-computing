@@ -36,6 +36,8 @@ knitr::include_graphics("figure/double_precision_number.png")
 52-bits fraction:<br>
 $\qquad$ 10110... = 1/2 + 0/4 + 1/8 + 1/16 + 0/32 + ...
 
+--
+
 ```{r, eval=TRUE}
 c((1 + 2^(-52)) - 1, 
   (1 + 2^(-53)) - 1)
@@ -53,7 +55,9 @@ knitr::include_graphics("figure/double_precision_number.png")
 
 11-bits exponent:<br>
 $\qquad$ $2^{11} = 2048$, covering −1022 to +1023
- 
+
+--
+
 ```{r, eval=TRUE}
 c(2^(1023), 2^(1024), 2^(-1022 - 52), 2^(-1023 - 52))
 ```
@@ -67,6 +71,8 @@ Example: 64-bits double-precision number
 ```{r, eval=TRUE}
 c(.Machine$double.xmax, .Machine$double.eps)
 ```
+
+--
 
 ```{r, eval=TRUE}
 log(.Machine$double.xmax)
@@ -96,9 +102,12 @@ reg_coef <- matrix(
 
 log_category_prob <- as.vector(X[1, ] %*% reg_coef)
 category_prob <- exp(log_category_prob) / sum(exp(log_category_prob))
+```
+--
+<p style="margin-top:-1.5ex;"> </p>
+```{r}
 category_prob
 ```
-
 ---
 
 # Floating point numbers
@@ -133,8 +142,13 @@ log_category_prob
 
 Numerical differentiation is one practical situation in which you clearly observe an effect of finite-precision.
 
+--
+
 Taylor's theorem tells us that
 $$f(x + \Delta x) = f(x) + \Delta x f'(x) + \frac{(\Delta x)^2}{2} f''(x) + \ldots.$$
+
+--
+
 So we can approximate $f'(x)$ using the relation
 $$\frac{f(x + \Delta x) - f(x)}{\Delta x} \approx f'(x) + O(\Delta x).$$
 ---
@@ -145,6 +159,8 @@ $$\frac{f(x + \Delta x) - f(x)}{\Delta x} \approx f'(x) + O(\Delta x).$$
 But we can do better; note that
 .small[$$f(x + \Delta x) = f(x) + \Delta x f'(x) + \frac{(\Delta x)^2}{2} f''(x) + \frac{(\Delta x)^3}{6} f'''(x) + \ldots$$]
 .small[$$f(x - \Delta x) = f(x) - \Delta x f'(x) + \frac{(\Delta x)^2}{2} f''(x) - \frac{(\Delta x)^3}{6} f'''(x) + \ldots$$]
+
+--
 
 So we have 
 $$\frac{f(x + \Delta x) - f(x - \Delta x)}{2 \Delta x} \approx f'(x) + O((\Delta x)^2),$$
@@ -159,8 +175,13 @@ We can extend the idea to get higher-order estimates e.g.
 .small[$$\frac{- f(x + 2 \Delta x) + 8 f(x + \Delta x) - 8 f(x - \Delta x) + f(x - 2 \Delta x)
   }{12 \Delta x} 
   = f'(x) + O((\Delta x)^4).$$]
+
+--
+
 BUT these higher-order methods aren't really practical.
 (You will find out one major reason in the homework.)
+
+--
 
 **Note:** For functions with multivariate inputs, we have 
 $f(\bx + \Delta x \, \bm{e}_i) = f(\bx) + \Delta x \, \partial_i f(\bx) + \ldots$.
@@ -175,6 +196,8 @@ class: inverse, middle, center
 # Example: Gaussian process regression
 
 Let's first review a property of multivariate Gaussian.
+
+--
 
 **Fact:** The conditional distribution of 
 $$\begin{bmatrix} \by_1 \\ \by_2 \end{bmatrix} 
@@ -196,11 +219,15 @@ $$\by_1 \given \by_2
 
 _Gaussian process_ $\, y(\bm{s}): \mathbb{R}^d \to \mathbb{R}$ is a Bayesian non-parametric prior for an unknown function.
 
-Its defining propety is that $\left( y(\bm{s}_1), \ldots, y(\bm{s}_n) \right)$ is multivariate Gaussian for any set of $\bm{s}_1, \ldots, \bm{s}_n$.
+--
 
 ```{r, echo=FALSE, eval=TRUE, out.width="100%"}
 knitr::include_graphics("figure/gp_regression_prior_posterior_prediction.png")
 ```
+
+--
+
+Its defining propety is that $\left( y(\bm{s}_1), \ldots, y(\bm{s}_n) \right)$ is multivariate Gaussian for any set of $\bm{s}_1, \ldots, \bm{s}_n$.
 
 ---
 
@@ -210,6 +237,8 @@ Besides $\mu(\bm{s}) = \mathbb{E}(y(\bm{s}))$, the _covariance function_
 $$k(\bm{s}, \bm{s}') = \textrm{cov}(y(\bm{s}), y(\bm{s}'))$$ 
 characterizes GP's behavior.
 <!-- More formally, a covariance function is a semi-positive definite symmetric kernel. -->
+
+--
 
 <p style="margin-top:3ex;"> </p>
 **Example:** Squared exponential covariance
@@ -236,22 +265,6 @@ The multiplication by $\bm{\Sigma}_{12}$ is reminiscent of kernel density smooth
 <!--     * exp(- sqrt(5) * scaled_dist) -->
 <!--   ) -->
 <!-- } -->
-
----
-
-# Example: Gaussian process regression
-
-Now let's see GP in action. First, some utility functions:
-```{r}
-sq_exp_cov <- function(dist, range) {
-  scaled_dist <- dist / range
-  return(exp(-scaled_dist^2))
-}
-#' Compute the conditional mean of `y_1` given `y_2`
-gauss_conditional_mean <- function(y_2, mu_1, mu_2, cov_12, cov_22) {
-  return(mu_1 + cov_12 %*% solve(cov_22, y_2 - mu_2))
-}
-```
 
 ---
 
@@ -406,7 +419,11 @@ $$\kappa := \lim_{\| \bdelta \bx \| \to 0} \sup_{\bdelta \bx}
 },$$
 where $\| \bx \| = \left( \sum_i x_i^2 \right)^{1/2}$ is the $\ell^2$-norm.  
 
+--
+
 We say a problem is _well-conditioned_ if $\kappa$ is small (e.g. $\kappa \lesssim 10^2$) and _ill-conditioned_ if $\kappa$ large (e.g. $\kappa \gtrsim 10^6$).
+
+--
 
 In particular, when $\kappa \approx 10^{16} \approx (\text{machine prec})^{-1}$, no algorithm can guarantee a meaningful result.
 
@@ -463,11 +480,15 @@ and $\| \bx \| / \| \bA \bx \| = \| \bA^{-1} \bA \bx \| / \| \bA \bx \| \leq \| 
 So we have shown that 
 $$\kappa(\bx \to \bA \bx) \leq \| \bA \| \| \bA^{-1} \|.$$
 
+--
+
 $\| \bA \| \| \bA^{-1} \|$ turns out to be such a fundamental quantity in numerical linear algebra that we define
 $$\kappa(\bA) := \| \bA \| \| \bA^{-1} \|.$$
+--
+
 ## Note:
 * $\kappa(\bA) = \kappa(\bA^{-1})$
-* $\kappa(\bA) = \sigma_{\max}(\bA) / \sigma_{\min}(\bA)$ when $\bA$ is symmetric and positive-definite, 
+* $\kappa(\bA) = \sigma_{\max}(\bA) / \sigma_{\min}(\bA)$, the ratio of the largest and smallest singular value. 
 <!-- Solving a linear system $\bA \bx = \bm{b}$ is one of the most common problem in statistical/scientific computing. -->
 
 <!-- **Question:** How acurate can $\bx = \bA^{-1} \bm{b}$ be? -->
@@ -480,6 +501,8 @@ Remember that malicious error?
 ```{r, error=TRUE, linewidth=70}
 y_predicted <- gauss_conditional_mean(y_obs, mean_new, mean_obs, Sigma_cross, Sigma_obs)
 ```
+
+--
 
 This is caused by the ill-conditioned covariance matrix: 
 
@@ -496,6 +519,8 @@ $$\newcommand{\algOutputMarker}[1]{\widetilde{#1}}
   \frac{\| \algOutputMarker{\bx} - \bx \|}{\| \bx \|} \, = \mathcal{O}(\kappa(\bA) \epsilon_{\textrm{machine}})$$
 where $\epsilon_{\textrm{machine}} \approx 10^{-16}$ (for most practical purposes).
 <!-- See Section 13 of Trefethen for a precise definition of machine epsilon. -->
+
+--
 
 ## Example: Solving $\small{\bm{X} \bm{\beta} = \bm{y}}\,$ for $\small{\bm{\beta}}\,$ via QR-decomposition
 <!-- Assuming, say, Householder triangulation for QR-decomposition. -->
