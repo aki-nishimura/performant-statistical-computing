@@ -272,6 +272,12 @@ The multiplication by $\bm{\Sigma}_{12}$ is reminiscent of kernel density smooth
 
 Now let's see GP in action. Say we observe a function over a grid with "gap" and want to fill it in:
 
+```{r, echo=FALSE}
+sq_exp_cov <- function(dist, range) {
+  return(exp(-(dist / range)^2))
+}
+```
+
 ```{r, echo=FALSE, fig.dim=c(8, 5), fig.retina=3, fig.align='center'}
 loc_obs <- c(seq(0, .4, .01), seq(.6, 1, .01))
 n_obs <- length(loc_obs)
