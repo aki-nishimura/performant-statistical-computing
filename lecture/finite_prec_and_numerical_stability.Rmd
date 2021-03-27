@@ -574,6 +574,9 @@ XTX_inverse <- solve(t(X) %*% X)
 beta_hat <- XTX_inverse %*% (t(X) %*% y)
 ```
 
+**Note:**
+(Iteratively) minimizing weighted least-square $\| \bm{W}^{1/2} (\bm{X} \bm{\beta} - \bm{y}) \|^2$ has an essentially identical structure.
+
 ---
 class: inverse, middle, center
 
