@@ -612,6 +612,88 @@ $$\bx \overset{\small \textrm{d}}{=} \bm{\mu} + \textstyle \sum_i \lambda_i^{1/2
 In other words, $\bm{u}_1, \bm{u}_2, \ldots$ are principal components.
 
 ---
+
+## Example: Gaussian process
+
+Here is our old friend, the squared exponential GP:
+
+```{r, eval=FALSE}
+loc_obs <- c(seq(0, .4, .01), seq(.6, 1, .01))
+n_obs <- length(loc_obs)
+
+set.seed(2021)
+corr_range <- .2
+dist_obs <- as.matrix(dist(loc_obs))
+Sigma_obs <- sq_exp_cov(dist_obs, corr_range)
+y_obs <- mvrnorm(mu = rep(0, n_obs), Sigma = Sigma_obs)
+```
+
+---
+
+## Example: Gaussian process
+
+Let's principal component analyze our GP friend:
+
+```{r}
+eigen_decomp <- eigen(Sigma_obs)
+eigen_vec <- eigen_decomp$vectors
+eigen_val <- eigen_decomp$values
+```
+
+--
+
+How do the principal components look like?
+
+```{r, eval=FALSE}
+n_pc_to_plot <- 3
+plot.new()
+for (i in 1:n_pc_to_plot) {
+  points(loc_obs, sqrt(eigen_val[i]) * eigen_vec[, i])
+}
+```
+
+---
+
+```{r, echo=FALSE, fig.dim=1.2 * c(8, 5), fig.align='center'}
+par(mar = c(4.1, 4.1, 0, 0))
+plot(NULL, xlab="s", ylab="y(s)", 
+     xlim=c(0, 1), ylim=c(-.8, .8),
+     cex=1.8, cex.lab=1.8, cex.axis=1.8, frame.plot = F)
+n_pc_to_plot <- 3
+for (i in 1:n_pc_to_plot) {
+  points(loc_obs, sqrt(eigen_val[i]) * eigen_vec[, i], col = tableau_color[[i]])
+}
+```
+
+---
+
+```{r, echo=FALSE, fig.dim=1.2 * c(8, 5), fig.align='center'}
+par(mar = c(4.1, 4.1, 0, 0))
+plot(NULL, xlab="s", ylab="y(s)", 
+     xlim=c(0, 1), ylim=c(-.8, .8),
+     cex=1.8, cex.lab=1.8, cex.axis=1.8, frame.plot = F)
+n_next_pc_to_plot <- 3
+for (i in (n_pc_to_plot + 1):(n_pc_to_plot + n_next_pc_to_plot)) {
+  points(loc_obs, sqrt(eigen_val[i]) * eigen_vec[, i], col = tableau_color[[i]])
+}
+```
+
+---
+
+```{r, echo=FALSE, fig.dim=1.2 * c(8, 5), fig.align='center'}
+par(mar = c(4.1, 4.1, 0, 0))
+plot(NULL, xlab="s", ylab="y(s)", 
+     xlim=c(0, 1), ylim=c(-.8, .8),
+     cex=1.8, cex.lab=1.8, cex.axis=1.8, frame.plot = F)
+n_more_pc_to_plot <- 3
+start <- n_pc_to_plot + n_next_pc_to_plot + 1
+end <- start + n_more_pc_to_plot - 1
+for (i in start:end) {
+  points(loc_obs, sqrt(eigen_val[i]) * eigen_vec[, i], col = tableau_color[[i]])
+}
+```
+
+---
 layout: false
 
 # Degenerate Gaussian & ill-conditioning
