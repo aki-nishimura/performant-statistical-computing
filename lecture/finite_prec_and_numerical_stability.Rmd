@@ -738,4 +738,39 @@ In case of degenerate Gaussian, an approximation
 
 is typically sensible.
 
+---
+class: inverse, middle, center
+
+# Summary & References 
+
+## Finite precision arithmetic & Numerical stability
+
+---
+
+# Summary
+
+Finite precision can cause an error when there is a perfectly fine mathematical/statistical answer.
+<p style="margin-top: -1ex;"> </p>
+* Don't stress when implementing a first verion, but figure out why and fix properly when errors arise.<br>
+--
+(No "hack" please.)
+
+--
+
+Magnitude of error in numerical linalg is typically proportional to $\kappa(\bm{A}) = \sigma_{\max}(\bm{A}) / \sigma_{\min}(\bm{A})$.
+<p style="margin-top: -1ex;"> </p>
+* Check it when getting an error. If huge, figure out why.
+
+---
+
+# Summary
+
+"Solve $\bm{A} \bx = \bm{b}$" never computes $\bm{A}^{-1}$. 
+
+Similar story for "minimize $\| \bm{X} \bm{\beta} - \bm{y} \|$."
+
+When numerical linalg go haywire, singular value/eigen decomposition is your dependable friend.
+<p style="margin-top: -1ex;"> </p>
+* But you could find ad-hoc yet more efficient friends (e.g. analytical approx, preconditioning, etc).
+
 
