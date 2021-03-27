@@ -773,4 +773,12 @@ When numerical linalg go haywire, singular value/eigen decomposition is your dep
 <p style="margin-top: -1ex;"> </p>
 * But you could find ad-hoc yet more efficient friends (e.g. analytical approx, preconditioning, etc).
 
+---
+
+# Reference
+
+.center[
+![](figure/trefethen_and_bau_linalg_book.jpg)&nbsp;&nbsp;&nbsp;
+![](figure/demmel_linalg_book.jpg)
+]
 
