@@ -592,7 +592,7 @@ _Singular value decomposition_ (SVD) is arguably the most versatile tool to deal
 
 --
 
-## (Important) special case: symmetric matrix $\bm{A}$
+## (Important) special case: symmetric positive-definite
 In this case, SVD coincides with _eigenvalue decomposition_:
 $$\bm{A} = \bm{U} \bm{\Lambda} \bm{U}^\intercal$$
 where $\bm{U}$ orthogonal (i.e. $\bm{U}^\intercal \bm{U} = \bm{I}$) and $\bm{\Lambda}$ diagonal.
@@ -601,7 +601,7 @@ where $\bm{U}$ orthogonal (i.e. $\bm{U}^\intercal \bm{U} = \bm{I}$) and $\bm{\La
 
 Eigen decomposition $\bm{A} = \bm{U} \bm{\Lambda} \bm{U}^\intercal$ is equivalent to
 $$\bm{A} = \textstyle \sum_i \lambda_i \bm{u}_i \bm{u}_i^\intercal \, \text{ for } \, \langle \bm{u}_i, \bm{u}_j \rangle = \mathbb{I}\{ i = j \},$$
-where we assume $\lambda_1 > \lambda_2 > \ldots$ as is customary.
+where we assume $\lambda_1 > \lambda_2 > \ldots \geq 0$ as is customary.
 
 --
 
