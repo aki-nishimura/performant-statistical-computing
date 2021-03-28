@@ -24,3 +24,9 @@ h1 { margin-bottom: -.1ex; }
 h2 { margin-bottom: 0; }
 ul { margin-top: 1ex; }
 ul li { margin-bottom: 1ex; }
+
+img.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
