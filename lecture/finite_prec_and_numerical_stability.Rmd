@@ -272,6 +272,12 @@ The multiplication by $\bm{\Sigma}_{12}$ is reminiscent of kernel density smooth
 
 Now let's see GP in action. Say we observe a function over a grid with "gap" and want to fill it in:
 
+```{r, echo=FALSE}
+sq_exp_cov <- function(dist, range) {
+  return(exp(-(dist / range)^2))
+}
+```
+
 ```{r, echo=FALSE, fig.dim=c(8, 5), fig.retina=3, fig.align='center'}
 loc_obs <- c(seq(0, .4, .01), seq(.6, 1, .01))
 n_obs <- length(loc_obs)
@@ -568,6 +574,9 @@ XTX_inverse <- solve(t(X) %*% X)
 beta_hat <- XTX_inverse %*% (t(X) %*% y)
 ```
 
+**Note:**
+(Iteratively) minimizing weighted least-square $\| \bm{W}^{1/2} (\bm{X} \bm{\beta} - \bm{y}) \|^2$ has an essentially identical structure.
+
 ---
 class: inverse, middle, center
 
@@ -586,7 +595,7 @@ _Singular value decomposition_ (SVD) is arguably the most versatile tool to deal
 
 --
 
-## (Important) special case: symmetric matrix $\bm{A}$
+## (Important) special case: symmetric positive-definite
 In this case, SVD coincides with _eigenvalue decomposition_:
 $$\bm{A} = \bm{U} \bm{\Lambda} \bm{U}^\intercal$$
 where $\bm{U}$ orthogonal (i.e. $\bm{U}^\intercal \bm{U} = \bm{I}$) and $\bm{\Lambda}$ diagonal.
@@ -595,7 +604,7 @@ where $\bm{U}$ orthogonal (i.e. $\bm{U}^\intercal \bm{U} = \bm{I}$) and $\bm{\La
 
 Eigen decomposition $\bm{A} = \bm{U} \bm{\Lambda} \bm{U}^\intercal$ is equivalent to
 $$\bm{A} = \textstyle \sum_i \lambda_i \bm{u}_i \bm{u}_i^\intercal \, \text{ for } \, \langle \bm{u}_i, \bm{u}_j \rangle = \mathbb{I}\{ i = j \},$$
-where we assume $\lambda_1 > \lambda_2 > \ldots$ as is customary.
+where we assume $\lambda_1 > \lambda_2 > \ldots \geq 0$ as is customary.
 
 --
 
@@ -604,6 +613,88 @@ where we assume $\lambda_1 > \lambda_2 > \ldots$ as is customary.
 Gaussian $\bx \sim \normalDist(\bm{\mu}, \bm{\Sigma} = \bm{U} \bm{\Lambda} \bm{U}^\intercal)$ can be expressed as
 $$\bx \overset{\small \textrm{d}}{=} \bm{\mu} + \textstyle \sum_i \lambda_i^{1/2} z_i \bm{u}_i \, \text{ for } \, z_i \iid \normalDist(0, 1).$$ 
 In other words, $\bm{u}_1, \bm{u}_2, \ldots$ are principal components.
+
+---
+
+## Example: Gaussian process
+
+Here is our old friend, the squared exponential GP:
+
+```{r, eval=FALSE}
+loc_obs <- c(seq(0, .4, .01), seq(.6, 1, .01))
+n_obs <- length(loc_obs)
+
+set.seed(2021)
+corr_range <- .2
+dist_obs <- as.matrix(dist(loc_obs))
+Sigma_obs <- sq_exp_cov(dist_obs, corr_range)
+y_obs <- mvrnorm(mu = rep(0, n_obs), Sigma = Sigma_obs)
+```
+
+---
+
+## Example: Gaussian process
+
+Let's principal component analyze our GP friend:
+
+```{r}
+eigen_decomp <- eigen(Sigma_obs)
+eigen_vec <- eigen_decomp$vectors
+eigen_val <- eigen_decomp$values
+```
+
+--
+
+How do the principal components look like?
+
+```{r, eval=FALSE}
+n_pc_to_plot <- 3
+plot.new()
+for (i in 1:n_pc_to_plot) {
+  points(loc_obs, sqrt(eigen_val[i]) * eigen_vec[, i])
+}
+```
+
+---
+
+```{r, echo=FALSE, fig.dim=1.2 * c(8, 5), fig.align='center'}
+par(mar = c(4.1, 4.1, 0, 0))
+plot(NULL, xlab="s", ylab="y(s)", 
+     xlim=c(0, 1), ylim=c(-.8, .8),
+     cex=1.8, cex.lab=1.8, cex.axis=1.8, frame.plot = F)
+n_pc_to_plot <- 3
+for (i in 1:n_pc_to_plot) {
+  points(loc_obs, sqrt(eigen_val[i]) * eigen_vec[, i], col = tableau_color[[i]])
+}
+```
+
+---
+
+```{r, echo=FALSE, fig.dim=1.2 * c(8, 5), fig.align='center'}
+par(mar = c(4.1, 4.1, 0, 0))
+plot(NULL, xlab="s", ylab="y(s)", 
+     xlim=c(0, 1), ylim=c(-.8, .8),
+     cex=1.8, cex.lab=1.8, cex.axis=1.8, frame.plot = F)
+n_next_pc_to_plot <- 3
+for (i in (n_pc_to_plot + 1):(n_pc_to_plot + n_next_pc_to_plot)) {
+  points(loc_obs, sqrt(eigen_val[i]) * eigen_vec[, i], col = tableau_color[[i]])
+}
+```
+
+---
+
+```{r, echo=FALSE, fig.dim=1.2 * c(8, 5), fig.align='center'}
+par(mar = c(4.1, 4.1, 0, 0))
+plot(NULL, xlab="s", ylab="y(s)", 
+     xlim=c(0, 1), ylim=c(-.8, .8),
+     cex=1.8, cex.lab=1.8, cex.axis=1.8, frame.plot = F)
+n_more_pc_to_plot <- 3
+start <- n_pc_to_plot + n_next_pc_to_plot + 1
+end <- start + n_more_pc_to_plot - 1
+for (i in start:end) {
+  points(loc_obs, sqrt(eigen_val[i]) * eigen_vec[, i], col = tableau_color[[i]])
+}
+```
 
 ---
 layout: false
@@ -647,4 +738,47 @@ In case of degenerate Gaussian, an approximation
 
 is typically sensible.
 
+---
+class: inverse, middle, center
+
+# Summary & References 
+
+## Finite precision arithmetic & Numerical stability
+
+---
+
+# Summary
+
+Finite precision can cause an error when there is a perfectly fine mathematical/statistical answer.
+<p style="margin-top: -1ex;"> </p>
+* Don't stress when implementing a first verion, but figure out why and fix properly when errors arise.<br>
+--
+(No "hack" please.)
+
+--
+
+Magnitude of error in numerical linalg is typically proportional to $\kappa(\bm{A}) = \sigma_{\max}(\bm{A}) / \sigma_{\min}(\bm{A})$.
+<p style="margin-top: -1ex;"> </p>
+* Check it when getting an error. If huge, figure out why.
+
+---
+
+# Summary
+
+"Solve $\bm{A} \bx = \bm{b}$" never computes $\bm{A}^{-1}$. 
+
+Similar story for "minimize $\| \bm{X} \bm{\beta} - \bm{y} \|$."
+
+When numerical linalg go haywire, singular value/eigen decomposition is your dependable friend.
+<p style="margin-top: -1ex;"> </p>
+* But you could find ad-hoc yet more efficient friends (e.g. analytical approx, preconditioning, etc).
+
+---
+
+# Reference
+
+.center[
+![](figure/trefethen_and_bau_linalg_book.jpg)&nbsp;&nbsp;&nbsp;
+![](figure/demmel_linalg_book.jpg)
+]
 
