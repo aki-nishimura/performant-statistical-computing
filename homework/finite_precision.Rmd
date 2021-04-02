@@ -27,7 +27,7 @@ Figure out what the function `determine_precision` is trying to do and fill out 
 ```{r}
 
 are_numerically_distinguishable <- function(value1, value2) {
-  # Fill in
+  value2 - value1 != 0
 }
 
 determine_precision <- function(init_upper_bound = 1) {
@@ -62,6 +62,9 @@ Does it agree with the theoretical expected value?
 If not, try coming up with possible explanations for the observed behavior (other than "Aki is an idiot --- there must be a bug in his function").
 
 ```{r}
+# Set seed
+set.seed(100)
+
 #' Estimates the expected number of duplicates when drawing uniformly with replacement.
 est_num_expected_duplicate <- function (n_draw, n_choice) {
   return(n_draw * (n_draw - 1) / n_choice) # First-order approx
@@ -70,9 +73,16 @@ est_num_expected_duplicate <- function (n_draw, n_choice) {
 n_unique_double <- 2^53 # Number of unique machine-representable values in [0, 1].
 n_draw <- 10^6
 
-# Fill in
+est_num_expected_duplicate(n_draw, n_unique_double)
+est_num_expected_duplicate(n_draw, n_unique_double)/n_draw
 
+# Draw 10^6 random numbers from unif[0,1]
+x <- runif(n_draw)
+length(which(duplicated(x) == TRUE))
+length(which(duplicated(x) == TRUE))/n_draw
 ```
+
+We see that the number of duplicates in the generated pseudo random numbers is much higher than the theoretical expected value (111 in the simulation and 0.0001110222 in the theoretical).
 
 
 # Problem 3
@@ -82,18 +92,19 @@ We evaluate its derivative using an analytical formula and compare it to the cen
 Plot the relative error in a log-log scale.
 What do you expect the slope of the plotted line to be?
 
+Since we expect the error to be of order $O(\Delta x)$ and since we shrink our $\Delta x$ by a factor of 2 with each step, we would expect the slope to be -2.  
 ```{r}
 #' Approximate derivative via centered-difference approximation
 approximate_deriv <- function(func, x, dx) {
-  # Fill in
+  (func(x+dx) - func(x-dx)) / (2*dx) 
 }
 
 log_logistic_func <- function(x) {
-  # Fill in
+  log(exp(x)/(1 + exp(x)))
 }
 
 log_logistic_deriv <- function(x) {
-  # Fill in
+  1/(1 + exp(x))
 }
 
 # Calculate and plot the relative errors of finite difference approximations
@@ -124,6 +135,8 @@ plot(
 
 ```
 Does your output agree with what you expected? 
+We see that the initial slope is -2, as expected.
+
 Explain the observed phenomenon.
 
 **Bonus question 1:** What is the slope in the "latter part" of your plotted line?
