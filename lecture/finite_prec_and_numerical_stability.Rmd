@@ -278,7 +278,7 @@ sq_exp_cov <- function(dist, range) {
 }
 ```
 
-```{r, echo=FALSE, fig.dim=c(8, 5), fig.retina=3, fig.align='center'}
+```{r, echo=FALSE, fig.dim=c(8, 5), fig.retina=2, fig.align='center'}
 loc_obs <- c(seq(0, .4, .01), seq(.6, 1, .01))
 n_obs <- length(loc_obs)
 
@@ -657,7 +657,7 @@ for (i in 1:n_pc_to_plot) {
 
 ---
 
-```{r, echo=FALSE, fig.dim=1.2 * c(8, 5), fig.align='center'}
+```{r, echo=FALSE, fig.dim=1.2 * c(8, 5), fig.retina=2, fig.align='center'}
 par(mar = c(4.1, 4.1, 0, 0))
 plot(NULL, xlab="s", ylab="y(s)", 
      xlim=c(0, 1), ylim=c(-.8, .8),
@@ -670,7 +670,7 @@ for (i in 1:n_pc_to_plot) {
 
 ---
 
-```{r, echo=FALSE, fig.dim=1.2 * c(8, 5), fig.align='center'}
+```{r, echo=FALSE, fig.dim=1.2 * c(8, 5), fig.retina=2, fig.align='center'}
 par(mar = c(4.1, 4.1, 0, 0))
 plot(NULL, xlab="s", ylab="y(s)", 
      xlim=c(0, 1), ylim=c(-.8, .8),
@@ -683,7 +683,7 @@ for (i in (n_pc_to_plot + 1):(n_pc_to_plot + n_next_pc_to_plot)) {
 
 ---
 
-```{r, echo=FALSE, fig.dim=1.2 * c(8, 5), fig.align='center'}
+```{r, echo=FALSE, fig.dim=1.2 * c(8, 5), fig.retina=2, fig.align='center'}
 par(mar = c(4.1, 4.1, 0, 0))
 plot(NULL, xlab="s", ylab="y(s)", 
      xlim=c(0, 1), ylim=c(-.8, .8),
