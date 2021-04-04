@@ -735,9 +735,19 @@ When we encounter a (near-)singular matrix, we need to figure out what's the "st
 
 --
 
-e.g. If $\bm{X}^\intercal \bm{X}$ is singular in linear model, let the user know that there's more parameters than data can estimate.
+e.g. If $\bm{X}^\intercal \bm{X}$ is singular in linear model, likely reasons are
+* $n \approx p$&nbsp; i.e. more params than can be reliably estimated
+* some features almost perfectly correlated
 
 --
+
+(Good idea to let the user know likely reasons if possible!)
+
+---
+
+# Degenerate Gaussian & ill-conditioning
+
+When we encounter a (near-)singular matrix, we need to figure out what's the "statistically right" answer.
 
 <p style="margin-top:3ex;"> </p>
 In case of degenerate Gaussian, an approximation
