@@ -463,6 +463,10 @@ On the other hands, the eigenvalues of a symmetric matrix are well-conditioned.
 
 First define the _matrix norm_ $\| \bA \| := \max_{\bm{v}} \| \bA \bm{v} \| / \| \bm{v} \|$, corresponding to the largest singular value of $\bA$.
 
+<!-- TODO: Consider spending a bit more time explaining the matrix norm.  -->
+<!-- Or, the condition number can be explained as the ratio of the greatest dilation and contraction of a vector by $\bm{A}$.  -->
+<!-- (And we can then note that $\| \bm{A}^{-1} \| = 1 / | \bm{A} |$.) -->
+
 --
 <p style="margin-top:3ex;"> </p>
 Now, let's study what happens under perturbation $\bdelta \bx$:
@@ -586,6 +590,10 @@ class: inverse, middle, center
 layout: true
 
 # Review of singular/eigen value decomp<br> and mutivariate Gaussian theory
+
+<!-- TODO: Consider actually discussing SVD. -->
+<!-- Also, Cholesky decomposition may be worth discussing given that we do explicitly use it every now and then. -->
+<!-- And a bit of complexity analysis along with it could be useful to see it once. -->
 
 ---
 
