@@ -15,30 +15,6 @@ for (pkg in required_packages) {
 source(file.path("..", "R", "colors.R"))
 ```
 
-<!-- # Problem x: QR decomposition via modified Gram-Schmidt -->
-<!-- Use ad-mixture as an example? -->
-
-<!-- ```{r, eval=FALSE} -->
-<!-- n_row <- 1000L -->
-<!-- n_col <- 100L -->
-<!-- design_mat <- matrix(rnorm(n_row * n_col), n_row, n_col) # Replace with real data at some point -->
-
-<!-- modified_gram_schmidt <- function(A) { -->
-<!--   R = matrix(0, nrow = ncol(A), ncol = ncol(A)) -->
-<!--   Q = A -->
-<!--   R[1, 1] = sqrt(sum(Q[, 1] * Q[, 1]))  -->
-<!--   Q[, 1] = (1 / R[1, 1]) * Q[, 1] -->
-<!--   for (j in 2:ncol(Q)) { -->
-<!--     for (i in 1:(j - 1)) { -->
-<!--       R[i, j] = sum(Q[, i] * Q[, j]) -->
-<!--       Q[, j] = Q[, j] - R[i, j] * Q[, i] -->
-<!--     } -->
-<!--     R[j, j] = sqrt(sum(Q[, j] * Q[, j])) -->
-<!--     Q[, j] = (1 / R[j, j]) * Q[, j] -->
-<!--   } -->
-<!--   return(list(Q=Q, R=R)) -->
-<!-- } -->
-<!-- ``` -->
 
 # Problem 1: Kriging / Gaussian process regression
 
