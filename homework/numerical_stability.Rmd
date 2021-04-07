@@ -1,0 +1,119 @@
+---
+title: 'Homework: numerical linear algebra and stability issues'
+output: html_notebook
+---
+
+```{r setup, echo=FALSE}
+required_packages <- c('MASS')
+for (pkg in required_packages) {
+  if (!(pkg %in% rownames(installed.packages()))) {
+    install.packages(pkg)
+  }
+  library(pkg, character.only = TRUE)
+}
+
+source(file.path("..", "R", "colors.R"))
+```
+
+<!-- # Problem x: QR decomposition via modified Gram-Schmidt -->
+<!-- Use ad-mixture as an example? -->
+
+<!-- ```{r, eval=FALSE} -->
+<!-- n_row <- 1000L -->
+<!-- n_col <- 100L -->
+<!-- design_mat <- matrix(rnorm(n_row * n_col), n_row, n_col) # Replace with real data at some point -->
+
+<!-- modified_gram_schmidt <- function(A) { -->
+<!--   R = matrix(0, nrow = ncol(A), ncol = ncol(A)) -->
+<!--   Q = A -->
+<!--   R[1, 1] = sqrt(sum(Q[, 1] * Q[, 1]))  -->
+<!--   Q[, 1] = (1 / R[1, 1]) * Q[, 1] -->
+<!--   for (j in 2:ncol(Q)) { -->
+<!--     for (i in 1:(j - 1)) { -->
+<!--       R[i, j] = sum(Q[, i] * Q[, j]) -->
+<!--       Q[, j] = Q[, j] - R[i, j] * Q[, i] -->
+<!--     } -->
+<!--     R[j, j] = sqrt(sum(Q[, j] * Q[, j])) -->
+<!--     Q[, j] = (1 / R[j, j]) * Q[, j] -->
+<!--   } -->
+<!--   return(list(Q=Q, R=R)) -->
+<!-- } -->
+<!-- ``` -->
+
+# Problem 1: Kriging / Gaussian process regression
+
+## Part 1: Finishing unfinished business from lecture
+
+Execute a command `git grep -n "sq_exp_cov <- function"` from the root directory of the git repository.
+Paste the output below.
+
+```{zsh, eval=FALSE}
+# Paste the `git grep` output.
+```
+
+The grep output tells you where you can find the (failed) kriging / Gaussian process regression example in the lecture source file.
+Copy the synthetic observation from there (the one defined on the range $[0, 0.4]$ and $[0.6, 1.0]$).
+
+```{r}
+# Fill in
+y_obs <- mvrnorm(mu = rep(0, n_obs), Sigma = Sigma_obs)
+```
+
+Let's now interpolate the missing values in $(0.4, 0.6)$ for real.
+To this end, we use eigen decomposition / pricipal component analysis of the GP.
+We can ignore the components with negligible ($\approx 0$) variance in computing $\boldsymbol{\Sigma}_{\textrm{obs}}^{-1} \boldsymbol{y}_{\textrm{obs}}$ since those components will not affect the final results of kriging/interpolation.
+In other words, we approximate $\boldsymbol{\Sigma}_{\textrm{obs}}^{-1}$ with $\sum_{i = 1}^k \lambda_i^{-1} \boldsymbol{u}_i \boldsymbol{u}_i^\intercal$ in computing $\boldsymbol{\Sigma}_{\textrm{obs}}^{-1} \boldsymbol{y}_{\textrm{obs}}$ for a suitably chosen number of principal components $k$.
+Choose $k$ to capture $99.99$\% of variance in $\boldsymbol{y}_{\textrm{obs}} \sim \mathcal{N}(\boldsymbol{0}, \boldsymbol{\Sigma}_{\textrm{obs}})$.
+
+```{r}
+loc_new <- seq(.41, .59, .01)
+# Compute the conditional mean of GP on the new locations.
+```
+
+```{r, fig.dim=c(8, 5), fig.align='center'}
+solid_circle_index <- 19
+plot(
+  # Fill in
+  xlab="s", ylab="y(s)", 
+  pch=solid_circle_index,
+  cex.lab=1.4, cex.axis=1.4, 
+  col=jhu_color$heritageBlue, 
+  frame.plot = F
+)
+points(
+  # Fil in
+  col = jhu_color$spiritBlue
+)
+```
+
+## Part 2: Quantifying uncertainty in interpolation
+Use the eigen-decomposition technique to compute the conditional covariance 
+$$\textrm{Var}(\boldsymbol{y}_1 \, | \, \boldsymbol{y}_2)
+  = \boldsymbol{\Sigma}_{11} - \boldsymbol{\Sigma}_{12} \boldsymbol{\Sigma}_{22}^{-1} \boldsymbol{\Sigma}_{21},$$
+calculate 95% CI intervals of the interpolation, and plot them.
+
+## Part 3: Kriging based on an alternative GP covariance function
+
+Albeit popular in certain fields, GP based on squared exponential covariance function is often considered "too smooth" for many applications.
+In particular, its smoothness is partially responsible for the extreme ill-conditioning of its covariance matrix. 
+Here we try carrying out the same interpolation task instead using a _Matern_ covariance function. 
+
+First find the definition and implementation of a Matern covariance using a command `git grep -n "Matern"`.
+
+```{r}
+# Definition of the `matern_cov` function.
+```
+
+Then use the eigen decomposition technique as before for interpolation and uncertainty quantification.
+Afterward, check the condition number of $\boldsymbol{\Sigma}_{\textrm{obs}}$ and see if you can directly compute $\boldsymbol{\Sigma}_{\textrm{obs}}^{-1} \boldsymbol{y}_{\textrm{obs}}$ using the `solve` function.
+Do we get the same answer as the one based on eigen decomposition?
+
+```{r}
+# Fill in
+```
+
+**Bonus question:** Symmetric positive-definite matrices can be inverted more quickly via the _Cholesky decomposition_ $\boldsymbol{L} \boldsymbol{L}^\intercal = \boldsymbol{A}$ than via the LU or QR decomposition. 
+<!-- The QR and LU decomposition takes $O(2 n^3 / 3)$ while the Cholesky takes $O(n^3 / 3)$ operations. -->
+The Cholesky decomposition also provides the "sqrt" of covariance matrix you need to sample from multivariate Gaussians.
+(Though you might be stuck with the eigen decomposition technique if the matrix is ill-conditioned.)
+Try computing $\boldsymbol{\Sigma}_{\textrm{obs}}^{-1} \boldsymbol{y}_{\textrm{obs}}$ via `chol` and `forward/backsolve`.
