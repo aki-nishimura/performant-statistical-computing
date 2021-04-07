@@ -5,6 +5,14 @@ are_all_close <- function(vector1, vector2, rel_tol = 1e-3) {
   return(all(coord_rel_err < rel_tol))
 }
 
+install_and_load_packages <- function(package_names) {
+  for (pkg in required_packages) {
+    if (!(pkg %in% rownames(installed.packages()))) {
+      install.packages(pkg)
+    }
+    library(pkg, character.only = TRUE)
+  }
+}
 
 simulate_sparse_binary_design <- function(n_obs, n_pred, density, seed = NULL) {
   if (!is.null(seed)) {
