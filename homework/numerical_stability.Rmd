@@ -89,7 +89,7 @@ Do we get the same answer as the one based on eigen decomposition?
 ```
 
 **Bonus question:** Symmetric positive-definite matrices can be inverted more quickly via the _Cholesky decomposition_ $\boldsymbol{L} \boldsymbol{L}^\intercal = \boldsymbol{A}$ than via the LU or QR decomposition. 
-<!-- The QR and LU decomposition takes $O(2 n^3 / 3)$ while the Cholesky takes $O(n^3 / 3)$ operations. -->
+<!-- The LU decomposition takes $O(2 n^3 / 3)$, QR $O(4 n^3 / 3)$, and Cholesky $O(n^3 / 3)$ operations. -->
 The Cholesky decomposition also provides the "sqrt" of covariance matrix you need to sample from multivariate Gaussians.
 (Though you might be stuck with the eigen decomposition technique if the matrix is ill-conditioned.)
 Try computing $\boldsymbol{\Sigma}_{\textrm{obs}}^{-1} \boldsymbol{y}_{\textrm{obs}}$ via `chol` and `forward/backsolve`.
