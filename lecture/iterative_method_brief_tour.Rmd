@@ -23,7 +23,7 @@ for (pkg in required_packages) {
   }
   library(pkg, character.only = TRUE)
 }
-source("../R/util.R")
+source(file.path("..", "R", "util.R"))
 ```
 
 # What are iterative methods?

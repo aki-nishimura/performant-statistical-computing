@@ -22,7 +22,7 @@ for (pkg in required_packages) {
   }
   library(pkg, character.only = TRUE)
 }
-source("../R/colors.R")
+source(file.path("..", "R", "colors.R"))
 ```
 
 # Floating point numbers
