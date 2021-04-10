@@ -1,6 +1,7 @@
 *.html
 *_files/
 **/.DS_Store
+lecture/*.pdf
 .Rproj.user
 .Rhistory
 .RData
