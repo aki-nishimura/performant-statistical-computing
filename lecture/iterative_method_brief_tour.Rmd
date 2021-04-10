@@ -116,7 +116,7 @@ X <- simulate_sparse_binary_design(
 
 Sparse matrix $\bm{X}$ won't be sparse after $\bm{X} \gets \bm{X} - \bm{1} \cdot \bm{\bar{x}}^\intercal$.
 
-Nor binary matrix $\bm{X}$ binary after $\bm{X} \gets \bm{X} \cdot \textrm{diag}(\bm{\sigma}_{\bm{X}})$.
+Nor binary matrix $\bm{X}$ binary after $\bm{X} \gets \bm{X} \cdot \textrm{diag}(\bm{\sigma}_{\bm{X}}^{-1})$.
 
 --
 
@@ -130,7 +130,7 @@ Beg for a fancy computer, or go home and cry.
 
 But wait! You can multiply by a centered and standardized matrix _without_ ever centering or standarding explicitly:
 
-$$\textrm{diag}(\bm{\sigma}_{\bm{X}}) \cdot \bm{v} = \bm{v} / \bm{\sigma}_{\bm{X}}$$
+$$\textrm{diag}(\bm{\sigma}_{\bm{X}}^{-1}) \cdot \bm{v} = \bm{v} / \bm{\sigma}_{\bm{X}}$$
 $$\left(\bm{X} - \bm{1} \cdot \bm{\bar{x}}^\intercal \right) \bm{v} = \bm{X} \bm{v} - (\bm{\bar{x}}^\intercal \bm{v}) \bm{1}$$
 
 ---
