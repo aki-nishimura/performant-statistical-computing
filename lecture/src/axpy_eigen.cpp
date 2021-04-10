@@ -4,7 +4,6 @@
 using Eigen::VectorXd;
 
 // [[Rcpp::export]]
-VectorXd axpy_eigen(double a, VectorXd& x, VectorXd& y) {
+void axpy_eigen(double a, VectorXd& x, VectorXd& y) {
 	y += a * x;
-	return(y);
 }
