@@ -20,7 +20,7 @@ NumericVector sign_via_if(NumericVector x) {
 
 
 // [[Rcpp::export]]
-NumericVector sign_via_subtract(NumericVector x) {
+NumericVector sign_via_diff(NumericVector x) {
   int n = x.size();
   NumericVector x_sign(n);
   for(int i = 0; i < n; ++i) {
