@@ -1,0 +1,63 @@
+---
+title: 'Homework: iterative method'
+output: html_notebook
+---
+
+```{r setup, include = FALSE}
+source(file.path("..", "R", "util.R"))
+required_packages <- c('RSpectra')
+install_and_load_packages(required_packages)
+```
+
+# Problem 1
+Auto regressive processes can be viewed as a discrete analog of Ornstein–Uhlenbeck process &mdash; which coincides with Gaussian process based on an exponential covariance matrix &mdash; and hence is an example of Gaussian Markov random fields.
+For instance, stationary lag-1 auto-regressive process 
+$$x_t = \phi x_{t - 1} + \sqrt{1 - \phi} \, \epsilon_t, 
+  \quad x_0 \sim \mathcal{N}(0, 1), 
+  \quad \epsilon_t \mathbin{\overset{\small \textrm{i.i.d.}}{\sim}} \mathcal{N}(0, 1)$$
+has the _tri-diagonal_ precision matrix
+$$\boldsymbol{\Sigma}^{-1} = \frac{1}{1 - \phi^2} 
+  \begin{bmatrix} 
+  1 & -\phi & 0 & & & \ldots & 0 \\
+  -\phi & 1 + \phi^2 & -\phi & 0 & & & \vdots \\
+  0 & -\phi & 1 + \phi^2 & -\phi & 0 & & \\
+    & & \ddots & \ddots & \ddots & & \\
+    & & 0 & -\phi & 1 + \phi^2 & -\phi & 0 \\
+  \vdots & &   & 0 & -\phi & 1 + \phi^2 & -\phi \\
+  0 & \ldots &   &   & 0 & -\phi & 1\\
+  \end{bmatrix}.$$
+More generally, a lag-$k$ (non-stationary) auto-regressive process has a _banded_ precision matrix with bandwidth $k$.
+
+Implement a fast matrix-vector $\boldsymbol{v} \to \boldsymbol{\Sigma}^{-1} \boldsymbol{v}$ operation, exploiting the structure of the AR-1 precision matrix.
+Then use this function to find the top 10 principal components of $\boldsymbol{\Sigma}$ (not $\boldsymbol{\Sigma}^{-1}$) via Lanczos algorithm provided via `RSpectra::eigs_sym`.
+
+```{r}
+ar_length <- 4096
+auto_corr <- .9 # Corresponds to `\phi` above
+
+ar_precision_matvec <- function(v, auto_corr) {
+  # Fill in
+}
+
+ar_eig <- eigs_sym(
+  ar_precision_matvec, args = auto_corr,
+  # Fill in
+  opts = list(
+    ncv = 100, # Spectrum distribution of AR-1 process is not very spread out on the extreme ends and is actually a hard case for Lanczos. So it helps to have more Lanczos vectors than the default for faster convergence.
+    maxitr = 10^3, # Cap it just in case
+    retvec = TRUE # More efficient to do without eigenvectors when not needed
+  ),
+)
+```
+
+Now, directly compute the eigen decomposition of $\boldsymbol{\Sigma}$ (not $\boldsymbol{\Sigma}^{-1}$) and compare its output with the principal components and associated variances found via Lancsoz algorithm.
+
+```{r}
+# Fill in
+```
+
+**Remark:** 
+For banded matrices, there actually are even more efficient approaches.
+To get a sense of special routines available for banded matrices, you can take a look at `*_banded` functions in [SciPy's linear algebra routines](https://docs.scipy.org/doc/scipy/reference/linalg.html).
+Even those functions represent only a subset of available numerical linear algebra techniques; see
+[LAPACK documentation for SVD](https://www.netlib.org/lapack/lug/node32.html) for example.
