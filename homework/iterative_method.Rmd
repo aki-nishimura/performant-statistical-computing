@@ -12,7 +12,7 @@ install_and_load_packages(required_packages)
 # Problem 1
 Auto regressive processes can be viewed as a discrete analog of Ornstein–Uhlenbeck process &mdash; which coincides with Gaussian process based on an exponential covariance matrix &mdash; and hence is an example of Gaussian Markov random fields.
 For instance, stationary lag-1 auto-regressive process 
-$$x_t = \phi x_{t - 1} + \sqrt{1 - \phi} \, \epsilon_t, 
+$$x_t = \phi x_{t - 1} + \sqrt{1 - \phi^2} \, \epsilon_t, 
   \quad x_0 \sim \mathcal{N}(0, 1), 
   \quad \epsilon_t \mathbin{\overset{\small \textrm{i.i.d.}}{\sim}} \mathcal{N}(0, 1)$$
 has the _tri-diagonal_ precision matrix
