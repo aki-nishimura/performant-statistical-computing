@@ -27,6 +27,17 @@ h2 { margin-bottom: 0; }
 ul { margin-top: 1ex; }
 ul li { margin-bottom: 1ex; }
 
+pre {
+    display: block;
+    font-family: monospace;
+    white-space: pre;
+    margin: 1em 0px;
+    margin-top: .5em; /* default = 1em; top and bottom margins seem to interact??? */
+    margin-right: 0px;
+    margin-bottom: .5em; /* default = 1em */
+    margin-left: 0px;
+}
+
 img.center {
   display: block;
   margin-left: auto;
