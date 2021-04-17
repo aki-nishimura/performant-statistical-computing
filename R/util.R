@@ -14,6 +14,18 @@ install_and_load_packages <- function(package_names) {
   }
 }
 
+summarize_benchmark <- function(bench_output, include_expression = FALSE) {
+  col_to_print <- c("min", "median", "mem_alloc", "gc/sec")
+  if (include_expression) {
+    col_to_print <- c("expression", col_to_print)
+  }
+  print_output <- capture.output(print(bench_output[col_to_print]))
+  row_to_print <- c(2, 4)
+  for (i in row_to_print) {
+    cat(paste0(print_output[i], '\n'))
+  }
+}
+
 simulate_sparse_binary_design <- function(n_obs, n_pred, density, seed = NULL) {
   if (!is.null(seed)) {
     set.seed(seed)
