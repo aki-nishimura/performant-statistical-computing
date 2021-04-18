@@ -36,7 +36,8 @@ ar_length <- 4096
 auto_corr <- .9 # Corresponds to `\phi` above
 
 ar_precision_matvec <- function(v, auto_corr) {
-  # Fill in
+  # Fill in: note that you can vectorize the calculation and do *not* need a for-loop. 
+  # (Hint: how would you efficiently carry out a matrix-vector operation if the matrix has non-zero entries only along the sub or super diagonal?)
 }
 
 ar_eig <- eigs_sym(
