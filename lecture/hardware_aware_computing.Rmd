@@ -403,3 +403,165 @@ Floating point arithmetic uses completely different logic:
 
 <img src="figure/computing_at_low_level/divide_double_by_two.png" class="center" style="width: 75%;"/> 
 
+---
+class: center, middle, inverse
+
+# It's about time: <br> worry less about number of arithmetic ops & more about data motion efficiency
+
+---
+
+# CPU got communication issues with RAM <br> .small[(a.k.a. von Neumann bottleneck)]
+<!-- <p style="margin-top: -1ex;"> </p> -->
+<img src="figure/computing_at_low_level/cpu_diagram_with_memory.jpeg" alt="" class="center" style="width: 90%;"/>
+
+---
+layout: true
+
+# Example: row- vs. column-oriented matvec
+
+---
+
+<!-- <p style="margin-top: 3ex;"> </p> -->
+Matvec $\bm{x} \to \bm{A} \bm{x}$ viewed as multiplying rows of $\bm{A}$ with $\bm{x}$:
+
+<img src="figure/computing_at_low_level/row_oriented_matvec.png" class="center" style="width: 85%;"/> 
+
+---
+
+<p style="margin-top:3ex;"> </p>
+
+Viewed as adding up cols of $\bm{A}$ multiplied by entries of $\bm{x}$:
+
+<img src="figure/computing_at_low_level/col_oriented_matvec.png" class="center" style="width: 100%;"/> 
+
+---
+
+Here is how a row-oriented matvec looks like:
+```{r}
+row_oriented_matvec <- function(A, v) {
+  Av <- rep(0., n_row)
+  for (i in 1:n_row) {
+    Av[i] <- sum(A[i, ] * v)
+  }
+  return(Av)
+}
+```
+and a column-oriented matvec:
+```{r}
+col_oriented_matvec <- function(A, v) {
+  Av <- rep(0., n_row)
+  for (j in 1:n_col) {
+    Av <- Av + A[, j] * v[j]
+  }
+  return(Av)
+}
+```
+
+---
+
+Let's compare their performence:
+
+```{r}
+n_row <- 4096L
+n_col <- 4096L
+A <- matrix(rnorm(n_row * n_col), n_row, n_col)
+v <- rnorm(n_row)
+```
+
+--
+
+```{r, eval=FALSE}
+bench::mark(
+  row_oriented_matvec(A, v)
+)
+```
+
+```{r, echo=FALSE}
+bench_output <- bench::mark(
+  Av_via_row <- row_oriented_matvec(A, v)
+)
+summarize_benchmark(bench_output)
+```
+
+```{r, eval=FALSE}
+bench::mark(
+  col_oriented_matvec(A, v)
+)
+```
+
+```{r, echo=FALSE}
+bench_output <- bench::mark(
+  Av_via_col <- col_oriented_matvec(A, v)
+)
+summarize_benchmark(bench_output)
+```
+
+```{r, echo=FALSE}
+stopifnot(are_all_close(Av_via_col, Av_via_row))
+```
+
+---
+
+Huh, maybe because it's not compiled code? Let's check.
+
+```{r, message=FALSE}
+sourceCpp(file.path('src', 'matvec.cpp'))
+```
+
+```{r, comment='', echo=FALSE}
+cat(readLines(file.path('src', 'matvec.cpp'))[6:17], sep = '\n')
+```
+
+---
+
+Huh, maybe because it's not compiled code? Let's check.
+
+```{r, message=FALSE}
+sourceCpp(file.path('src', 'matvec.cpp'))
+```
+
+```{r, comment='', echo=FALSE}
+cat(readLines(file.path('src', 'matvec.cpp'))[20:31], sep = '\n')
+```
+
+---
+
+Huh, maybe because it's not compiled code? Let's check.
+
+```{r, eval=FALSE}
+bench::mark(
+  row_oriented_matvec_c(A, v)
+)
+```
+
+```{r, echo=FALSE}
+bench_output <- bench::mark(
+  Av_via_row <- row_oriented_matvec_c(A, v)
+)
+summarize_benchmark(bench_output)
+```
+
+```{r, eval=FALSE}
+bench::mark(
+  col_oriented_matvec_c(A, v)
+)
+```
+
+```{r, echo=FALSE}
+bench_output <- bench::mark(
+  Av_via_col <- col_oriented_matvec_c(A, v)
+)
+summarize_benchmark(bench_output)
+```
+
+--
+
+```{r, eval=FALSE}
+bench::mark(A %*% v)
+```
+
+```{r, echo=FALSE}
+summarize_benchmark(bench::mark(A %*% v))
+```
+
+
