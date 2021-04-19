@@ -119,9 +119,24 @@ y <- rep(0.00159, n)
 
 --
 
-```{r, comment=''}
+```{r, eval=FALSE}
 bench::mark(axpy(a, x, y))
+```
+
+```{r, echo=FALSE}
+summarize_benchmark(
+  bench::mark(axpy(a, x, y))
+)
+```
+
+```{r, eval=FALSE}
 bench::mark(axpy_vec(a, x, y))
+```
+
+```{r, echo=FALSE}
+summarize_benchmark(
+  bench::mark(axpy_vec(a, x, y))
+)
 ```
 
 ---
@@ -139,8 +154,14 @@ cat(readLines(file.path('src', 'axpy_c.cpp')), sep = '\n')
 
 --
 
-```{r, comment=''}
+```{r, eval=FALSE}
 bench::mark(axpy_c(a, x, y))
+```
+
+```{r, echo=FALSE}
+summarize_benchmark(
+  bench::mark(axpy_c(a, x, y))
+)
 ```
 
 ---
@@ -180,8 +201,14 @@ cat(readLines(file.path('src', 'axpy_eigen.cpp')), sep = '\n')
 
 --
 
-```{r}
+```{r, eval=FALSE}
 bench::mark(axpy_eigen(a, x, y))
+```
+
+```{r, echo=FALSE}
+summarize_benchmark(
+  bench::mark(axpy_eigen(a, x, y))
+)
 ```
 
 ---
@@ -196,8 +223,14 @@ sourceCpp(file.path('src', 'axpy_arma.cpp'))
 cat(readLines(file.path('src', 'axpy_arma.cpp')), sep = '\n')
 ```
 
-```{r}
+```{r, eval=FALSE}
 bench::mark(axpy_arma(a, x, y))
+```
+
+```{r, echo=FALSE}
+summarize_benchmark(
+  bench::mark(axpy_arma(a, x, y))
+)
 ```
 
 ---
@@ -230,19 +263,57 @@ cat(readLines(file.path('src', 'sign.cpp'))[22:30], sep = '\n')
 ---
 
 Let's compare their performances:
-```{r}
+```{r, echo=FALSE}
+x <- rnorm(10^6)
+```
+
+```{r, eval=FALSE}
 x <- rnorm(10^6)
 bench::mark(sign_via_if(x))
+```
+
+```{r, echo=FALSE}
+summarize_benchmark(
+  bench::mark(sign_via_if(x))
+)
+```
+
+```{r, eval=FALSE}
 bench::mark(sign_via_diff(x))
+```
+
+```{r, echo=FALSE}
+summarize_benchmark(
+  bench::mark(sign_via_diff(x))
+)
 ```
 
 ---
 
 Let's try again to make sure... oh, what happened?
-```{r}
+```{r, echo=FALSE}
+x <- rep(1, 10^6)
+```
+
+```{r, eval=FALSE}
 x <- rep(1, 10^6)
 bench::mark(sign_via_if(x))
+```
+
+```{r, echo=FALSE}
+summarize_benchmark(
+  bench::mark(sign_via_if(x))
+)
+```
+
+```{r, eval=FALSE}
 bench::mark(sign_via_diff(x))
+```
+
+```{r, echo=FALSE}
+summarize_benchmark(
+  bench::mark(sign_via_diff(x))
+)
 ```
 
 ```{r, include=FALSE}
