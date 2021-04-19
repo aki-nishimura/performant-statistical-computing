@@ -428,11 +428,37 @@ Matvec $\bm{x} \to \bm{A} \bm{x}$ viewed as multiplying rows of $\bm{A}$ with $\
 
 ---
 
-<p style="margin-top:3ex;"> </p>
-
 Viewed as adding up cols of $\bm{A}$ multiplied by entries of $\bm{x}$:
 
 <img src="figure/computing_at_low_level/col_oriented_matvec.png" class="center" style="width: 100%;"/> 
+
+<p style="margin-top:-.5ex;"> </p>
+
+.pull-left[
+```{r, eval=FALSE}
+# Row-oriented matvec
+Ax <- rep(0, n_row)
+for (i in 1:n_row) {
+  for (j in 1:n_col) {
+    Ax[i] <- Ax[i] + 
+      A[i, j] * x[j]
+  }
+}
+```
+]
+
+.pull-right[
+```{r, eval=FALSE}
+# Column-oriented matvec
+Ax <- rep(0, n_row)
+for (j in 1:n_col) {
+  for (i in 1:n_row) {
+    Ax[i] <- Ax[i] + 
+      A[i, j] * x[j]
+  }
+}
+```
+]
 
 ---
 
