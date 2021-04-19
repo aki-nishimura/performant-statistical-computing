@@ -15,7 +15,7 @@ install_and_load_packages <- function(package_names) {
 }
 
 summarize_benchmark <- function(bench_output, include_expression = FALSE) {
-  col_to_print <- c("min", "median", "mem_alloc", "gc/sec")
+  col_to_print <- c("min", "median", "mem_alloc", "n_itr")
   if (include_expression) {
     col_to_print <- c("expression", col_to_print)
   }
