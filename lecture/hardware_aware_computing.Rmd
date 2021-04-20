@@ -590,4 +590,75 @@ bench::mark(A %*% v)
 summarize_benchmark(bench::mark(A %*% v))
 ```
 
+---
+layout: false
+
+# Challenge: feeding data fast enough to CPU
+
+<img src="figure/computing_at_low_level/cache_hierarchy_single_core.png" alt="" class="center" style="width: 70%;"/>
+
+---
+
+# Effect of cache miss and memory latency
+
+Consider the following situation in your computer:
+* CPU keeps itself busy if all data were in L1 cache,
+but need 10 clock cycles to fetch data from L2 cache.
+--
+
+* On average, CPU finds 90% of necessary data in L1 cache, but have to look L2 cache for remaining 10%.
+
+--
+
+How long does it take for CPU to complete 10&nbsp;operations?
+<!-- "how long" = "how many clock cycles" -->
+
+---
+
+# Lesson: optimize your code for data motion
+
+Turns out R arrays are stored in _column major_ order:
+
+<p style="margin-top: 3ex; margin-bottom: 3ex;"> 
+<img src="figure/computing_at_low_level/column_major_matrix.png" alt="" class="center" style="width: 100%;"/>
+</p>
+
+--
+
+So it is more efficient to access its elements column-wise!
+
+---
+
+# Lesson: optimize your code for data motion
+
+In C and Python, arrays are stored in _row major_ order:
+
+<p style="margin-top: 3ex; margin-bottom: 3ex;"> 
+<img src="figure/computing_at_low_level/row_major_matrix.png" alt="" class="center" style="width: 100%;"/>
+</p>
+
+Make sure you choose the right order for double for-loops!
+(Stan uses C arrays, for example.)
+
+---
+
+# Things get even more complicated when trying to parallelize over multiple CPUs
+
+<p style="margin-top: 3ex;"> </p>
+
+<img src="figure/computing_at_low_level/cache_hierarchy_multi_core.png" alt="" class="center" style="width: 100%;"/>
+
+---
+
+<p style="margin-top: 3ex;"> </p>
+<img src="figure/computing_at_low_level/HPCG_results_Nov_2016.png" alt="" class="center" style="width: 100%;"/>
+
+---
+
+<p style="margin-top: 4ex;"> </p>
+
+.large[**Nov 2020 Ranking:**]<br> 
+$\quad$ .large[**Actual over theoretical performance**]
+
+<img src="figure/computing_at_low_level/highest_hpcg_to_peak_ratio_among_top500_Nov_2020.jpeg" alt="" class="center" style="width: 100%;"/>
 
