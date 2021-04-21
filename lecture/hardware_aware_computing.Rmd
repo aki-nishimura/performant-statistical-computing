@@ -233,89 +233,6 @@ summarize_benchmark(
 )
 ```
 
----
-layout: true
-
-# Details matter in "tight loops"
-
----
-
-Consider two implementations of a `sign` function:
-```{r, message=FALSE}
-sourceCpp(file.path('src', 'sign.cpp'))
-```
-
-```{r, comment='', echo=FALSE}
-cat(readLines(file.path('src', 'sign.cpp'))[5:20], sep = '\n')
-```
-
----
-
-Consider two implementations of a `sign` function:
-```{r, eval=FALSE}
-sourceCpp(file.path('src', 'sign.cpp'))
-```
-
-```{r, comment='', echo=FALSE}
-cat(readLines(file.path('src', 'sign.cpp'))[22:30], sep = '\n')
-```
-
----
-
-Let's compare their performances:
-```{r, echo=FALSE}
-x <- rnorm(10^6)
-```
-
-```{r, eval=FALSE}
-x <- rnorm(10^6)
-bench::mark(sign_via_if(x))
-```
-
-```{r, echo=FALSE}
-summarize_benchmark(
-  bench::mark(sign_via_if(x))
-)
-```
-
-```{r, eval=FALSE}
-bench::mark(sign_via_diff(x))
-```
-
-```{r, echo=FALSE}
-summarize_benchmark(
-  bench::mark(sign_via_diff(x))
-)
-```
-
----
-
-Let's try again to make sure... oh, what happened?
-```{r, echo=FALSE}
-x <- rep(1, 10^6)
-```
-
-```{r, eval=FALSE}
-x <- rep(1, 10^6)
-bench::mark(sign_via_if(x))
-```
-
-```{r, echo=FALSE}
-summarize_benchmark(
-  bench::mark(sign_via_if(x))
-)
-```
-
-```{r, eval=FALSE}
-bench::mark(sign_via_diff(x))
-```
-
-```{r, echo=FALSE}
-summarize_benchmark(
-  bench::mark(sign_via_diff(x))
-)
-```
-
 ```{r, include=FALSE}
 # No more Rcpp compilations; stop caching
 knitr::opts_chunk$set(cache = FALSE)
@@ -402,6 +319,90 @@ In order to optimize division as bit-shift, a compiler needs to know we are divi
 Floating point arithmetic uses completely different logic:
 
 <img src="figure/computing_at_low_level/divide_double_by_two.png" class="center" style="width: 75%;"/> 
+
+---
+layout: true
+
+# Details matter in "tight loops"
+
+---
+
+Consider two implementations of a `sign` function:
+```{r, message=FALSE, cache=TRUE}
+sourceCpp(file.path('src', 'sign.cpp'))
+```
+
+```{r, comment='', echo=FALSE}
+cat(readLines(file.path('src', 'sign.cpp'))[5:20], sep = '\n')
+```
+
+---
+
+Consider two implementations of a `sign` function:
+```{r, eval=FALSE}
+sourceCpp(file.path('src', 'sign.cpp'))
+```
+
+```{r, comment='', echo=FALSE}
+cat(readLines(file.path('src', 'sign.cpp'))[22:30], sep = '\n')
+```
+
+---
+
+Let's compare their performances:
+```{r, echo=FALSE}
+x <- rnorm(10^6)
+```
+
+```{r, eval=FALSE}
+x <- rnorm(10^6)
+bench::mark(sign_via_if(x))
+```
+
+```{r, echo=FALSE}
+summarize_benchmark(
+  bench::mark(sign_via_if(x))
+)
+```
+
+```{r, eval=FALSE}
+bench::mark(sign_via_diff(x))
+```
+
+```{r, echo=FALSE}
+summarize_benchmark(
+  bench::mark(sign_via_diff(x))
+)
+```
+
+---
+
+Let's try again to make sure... oh, what happened?
+```{r, echo=FALSE}
+x <- rep(1, 10^6)
+```
+
+```{r, eval=FALSE}
+x <- rep(1, 10^6)
+bench::mark(sign_via_if(x))
+```
+
+```{r, echo=FALSE}
+summarize_benchmark(
+  bench::mark(sign_via_if(x))
+)
+```
+
+```{r, eval=FALSE}
+bench::mark(sign_via_diff(x))
+```
+
+```{r, echo=FALSE}
+summarize_benchmark(
+  bench::mark(sign_via_diff(x))
+)
+```
+
 
 ---
 class: center, middle, inverse
