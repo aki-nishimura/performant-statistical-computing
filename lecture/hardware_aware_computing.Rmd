@@ -321,9 +321,16 @@ Floating point arithmetic uses completely different logic:
 <img src="figure/computing_at_low_level/divide_double_by_two.png" class="center" style="width: 75%;"/> 
 
 ---
+layout: false
+class: center, middle, inverse
+
+# Pipelining "fetch-decode-execute-store"
+## How to keep your CPU "executing"
+
+---
 layout: true
 
-# Details matter in "tight loops"
+# Example: effect of details in "tight loops"
 
 ---
 
@@ -377,7 +384,7 @@ summarize_benchmark(
 
 ---
 
-Let's try again to make sure... oh, what happened?
+Another run just to make sure... oh, what happened?
 ```{r, echo=FALSE}
 x <- rep(1, 10^6)
 ```
@@ -402,6 +409,53 @@ summarize_benchmark(
   bench::mark(sign_via_diff(x))
 )
 ```
+
+---
+layout: false
+
+# Instruction cycle:<br> $\quad$ fetch-decode-execute-store
+
+<img src="figure/computing_at_low_level/fetch_decode_execute_store_cycle.png" class="center" style="width: 70%;"/> 
+
+---
+
+# Instruction cycle:<br> $\quad$ fetch-decode-execute-store
+
+<img src="figure/computing_at_low_level/fetch_decode_execute_store_cycle_more_details.jpeg" class="center" style="width: 100%;"/> 
+
+---
+
+# "Instruction pipelining" to avoid idle time
+
+<p style="margin-top: -1ex;"> </p>
+<img src="figure/computing_at_low_level/instruction_pipelining.png" class="center" style="width: 70%;"/> 
+
+---
+layout: true
+
+# Keep it simple & predictable for pipelining
+
+---
+
+You can't pipeline if the next action depends on curr one!
+
+---
+
+Let's take another look at the two `sign` implementations:
+
+<img src="figure/computing_at_low_level/sign_via_diff.png" class="center" style="width: 100%;"/> 
+
+---
+
+Let's take another look at the two `sign` implementations:
+
+<img src="figure/computing_at_low_level/sign_via_if.png" class="center" style="width: 100%;"/> 
+
+---
+
+Let's take another look at the two `sign` implementations:
+
+<img src="figure/computing_at_low_level/sign_via_if_optimized.png" class="center" style="width: 100%;"/> 
 
 
 ---
