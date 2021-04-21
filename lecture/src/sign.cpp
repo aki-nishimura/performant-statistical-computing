@@ -24,7 +24,7 @@ NumericVector sign_via_diff(NumericVector x) {
   int n = x.size();
   NumericVector x_sign(n);
   for(int i = 0; i < n; ++i) {
-    x_sign[i] = (double)(x[i] > 0) - (double)(x[i] < 0);
+    x_sign[i] = (x[i] > 0) - (x[i] < 0);
   }
   return x_sign;
 }
