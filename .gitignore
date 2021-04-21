@@ -2,6 +2,7 @@
 *_files/
 *_cache/
 **/.DS_Store
+lecture/libs/*
 lecture/*.pdf
 .Rproj.user
 .Rhistory
