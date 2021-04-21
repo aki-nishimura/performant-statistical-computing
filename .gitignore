@@ -1,5 +1,6 @@
 *.html
 *_files/
+*_cache/
 **/.DS_Store
 lecture/*.pdf
 .Rproj.user
