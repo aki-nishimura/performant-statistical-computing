@@ -92,6 +92,8 @@ class: center, middle, inverse
 e.g. `axpy` from _Basic Linear Algebra Subprograms_ (BLAS):
 $$\bm{y} \gets a \bm{x} + \bm{y}$$
 
+--
+
 ```{r}
 axpy <- function(a, x, y) {
   for (i in 1:length(x)) {
