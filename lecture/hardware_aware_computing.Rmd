@@ -256,6 +256,11 @@ class: center, middle, inverse
 
 ---
 
+# Registers: most accessible data storage
+<img src="figure/computing_at_low_level/x86_32bits_registers.png" class="center" style="width: 85%;"/>
+
+---
+
 # What's machine doing behind the scene?
 
 To foster mutual understanding between us and machine, let's look at simple _assembly code_.
@@ -263,11 +268,6 @@ To foster mutual understanding between us and machine, let's look at simple _ass
 --
 
 <img src="figure/computing_at_low_level/divide_int_by_two.png" class="center" style="width: 100%;"/>
-
----
-
-# Registers: most accessible data storage
-<img src="figure/computing_at_low_level/x86_32bits_registers.png" class="center" style="width: 85%;"/>
 
 ---
 
