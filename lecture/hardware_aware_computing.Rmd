@@ -290,8 +290,11 @@ To foster mutual understanding between us and machine, let's look at simple _ass
   <img src="figure/computing_at_low_level/divide_int_by_two_assembly_only.png" class="left" style="width: 100%;"/> 
 ]
 .pull-right[
-  <img src="figure/computing_at_low_level/twos_complement_representation_of_integer.png" class="center" style="width: 100%;"/>
+  "sar" = _arith. shift_ to right
+  
+  <img src="figure/computing_at_low_level/right_arithmetic_shift.png" class="center" style="width: 100%;"/>
 ]
+<!-- https://stackoverflow.com/questions/40638335/why-does-the-compiler-generate-a-right-shift-by-31-bits-when-dividing-by-2 -->
 
 ---
 
@@ -300,11 +303,8 @@ To foster mutual understanding between us and machine, let's look at simple _ass
   <img src="figure/computing_at_low_level/divide_int_by_two_assembly_only.png" class="left" style="width: 100%;"/> 
 ]
 .pull-right[
-  "sar" = _arith. shift_ to right
-  
-  <img src="figure/computing_at_low_level/right_arithmetic_shift.png" class="center" style="width: 100%;"/>
+  <img src="figure/computing_at_low_level/twos_complement_representation_of_integer.png" class="center" style="width: 100%;"/>
 ]
-<!-- https://stackoverflow.com/questions/40638335/why-does-the-compiler-generate-a-right-shift-by-31-bits-when-dividing-by-2 -->
 
 ---
 
