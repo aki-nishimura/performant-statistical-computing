@@ -461,6 +461,7 @@ Let's take another look at the two `sign` implementations:
 
 
 ---
+layout: false
 class: center, middle, inverse
 
 # It's about time: <br> worry less about number of arithmetic ops & more about data motion efficiency
