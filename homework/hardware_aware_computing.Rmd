@@ -1,0 +1,165 @@
+---
+title: 'Homework: hardware aware computing'
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r setup, echo=FALSE}
+required_packages <- c('Rcpp', 'RSpectra', 'testit')
+for (pkg in required_packages) {
+  if (!(pkg %in% rownames(installed.packages()))) {
+    install.packages(pkg)
+  }
+  library(pkg, character.only = TRUE)
+}
+
+source(file.path("..", "R", "util.R"))
+```
+
+```{r knitr_options, include=FALSE}
+# Print outputs without "##"
+knitr::opts_chunk$set(comment = '')
+```
+
+
+# Problem 1: Accelerated principal component calculation via Rcpp
+In prior homework, we implemented an approach to calculating the principal components of a lag-1 auto-regressive process without explicitly representing its covariance matrix $\boldsymbol{\Sigma}$.
+To this end, we only needed to provide the Lanczos algorithm a function for carrying out the matrix-vector multiplication $\boldsymbol{v} \to \boldsymbol{\Sigma}^{-1} \boldsymbol{v}$.
+Here we will try to make the function more efficient by re-writing it in Rcpp.
+
+Complete the implementation of `ar_precision_matvec` in the `structured_matvec.cpp` file below and make the compiled function available to R via `sourceCpp`.
+  
+```{r}
+sourceCpp(file.path("src", "structured_matvec.cpp"))
+```
+
+Make sure the `ar_precision_matvec` function in Rcpp is correctly implemented by comparing its output to an R implementation.
+Testing your functions become particularly important when using Rcpp because C++ has far fewer built-in checks than R &mdash; e.g. C++ won't stop you from accessing non-existing/out-of-bounds elements of an array!
+
+```{r}
+ar_length <- 4096
+auto_corr <- .9
+
+ar_precision_matvec_R <- function(v, auto_corr) {
+  n <- length(v)
+  if (n < 3) {
+    stop("Error: function assumes the AR process of length at least 3.")
+  }
+  # Multiplication by the diagonal
+  result <- (1 + auto_corr^2) * v
+  result[1] <- v[1]
+  result[n] <- v[n]
+  # Add contributions from the off-diagonals
+  result[1:(n - 1)] <- result[1:(n - 1)] - auto_corr * v[2:n]
+  result[2:n] <- result[2:n] - auto_corr * v[1:(n - 1)]
+  result <- result / (1 - auto_corr^2)
+  return(result)
+}
+```
+
+```{r}
+# Check the output of your Rcpp function `ar_precision_matvec`
+```
+
+Benchmark performance of the R and Rcpp implementations of `ar_precision_matvec`.
+Then use the Rcpp implementation to find the top 10 principal components of $\boldsymbol{\Sigma}$ via Lanczos algorithm.
+How much faster is it compared to explicit eigen decomposition of $\boldsymbol{\Sigma}$?
+
+```{r}
+# Comare performences of the R and Rcpp implementation
+```
+
+```{r, eval=FALSE}
+# Use your Rcpp implementation and compute the principal components
+system.time(
+  ar_eig <- eigs_sym(
+    ar_precision_matvec,
+    n = ar_length, args = auto_corr,
+    k = 10, which = "SM",
+    opts = list(
+      ncv = 100, # Spectrum distribution of AR-1 process is not very spread out on the extreme ends and is actually a hard case for Lanczos. So it helps to have more Lanczos vectors than the default for faster convergence.
+      maxitr = 10^3, # Cap it just in case
+      retvec = TRUE # More efficient to do without eigenvectors when not needed
+    ),
+  )
+)
+```
+
+**Bonus Problem:** A symmetric '$k$-banded' matrices of size $n \times n$ can be efficiently stored in a $n \times (k + 1)$ matrix with no loss of information; see [Wikipedia page on banded matrices](https://en.wikipedia.org/wiki/Band_matrix#Band_storage).
+Complete the implementation of `sym_banded_matvec` in the `structured_matvec.cpp` file.
+How does the `sym_banded_matvec` performance compare with `ar_precision_matvec`?
+What aspects of hardware designs might be contributing to the relative performance?
+
+
+# Problem 2: Multiplying two matrices ain't quite what you learned in your linear algebra class
+
+## Part I: Paying homage to your linear algebra teacher
+
+As we all learned in our linear algebra class, the matrix product $\boldsymbol{C} = \boldsymbol{A} \boldsymbol{B}$ of $\boldsymbol{A} \in \mathbb{R}^{n \times r}$ and $\boldsymbol{B} \in \mathbb{R}^{r \times m}$ has its elements defined as
+$$C_{ij} = \sum_{k = 1}^r A_{ik} B_{kj}.$$
+So a conceptually natural way to implement a matrix multiplication is looping through each row of $\boldsymbol{A}$ and column of $\boldsymbol{B}$, taking inner products of the pairs of vectors:
+
+![](figure/matrix_multi_via_row_col_dot.gif){width=30%}
+
+Implement a matrix-matrix multiplication based on this approach as `row_col_dot_matmat` using the starter code provided in the `matmat.cpp` file.
+Then check that its output agrees with the base R matrix multiplication.
+
+```{r}
+sourceCpp(file.path("src", "matmat.cpp"))
+```
+
+```{r}
+n_row <- 512L
+n_inner <- 1024L
+n_col <- 256L
+A <- matrix(rnorm(n_row * n_inner), nrow = n_row, ncol = n_inner)
+B <- matrix(rnorm(n_inner * n_col), nrow = n_inner, ncol = n_col)
+```
+
+```{r}
+# Check the output of `row_col_dot_matmat`
+```
+
+## Part II: Going one step beyond your linear algebra class
+
+We now consider an alternative approach to matrix-matrix multiplications, noting that we can think of a matrix product $\boldsymbol{A} \cdot \boldsymbol{B}$ as each column of $\boldsymbol{B}$ multiplied by $\boldsymbol{A}$:
+$$\boldsymbol{A} \cdot \boldsymbol{B} = \big[ \, \boldsymbol{A} \boldsymbol{b}_1 \, | \, \ldots \, | \, \boldsymbol{A} \boldsymbol{b}_m \, \big].$$
+Recalling from lecture that "column-oriented" matrix-vector multiplication is more efficient than "row-oriented" one for R matrices, implement `col_oriented_matmat` (in `matmat.cpp`) that loops through each column of $\boldsymbol{B}$ applying the column-oriented matrix-vector multiplication.
+Then compare performances of `row_col_dot_matmat` and `col_oriented_matmat` (but only after you test your column-oriented implementation, for heaven's sake!).
+Which one is faster and why?
+
+```{r}
+# Check and benchmark
+```
+
+Also compare with performance of the matrix-matrix multiplication via `%*%` in R, which uses whatever the BLAS library your R was configured with.
+(You can find out which BLAS library R is using via `sessionInfo()` or `extSoftVersion()`.) 
+
+```{r}
+# Fill in
+```
+
+When benchmarking alternative implementations (or alternative algorithms, more generally), keep in mind that the relative performance depends significantly on the size of a test problem.
+It is important, therefore, to benchmark your implementation/algorithm on problems of realistic size. 
+See the benchmark results of linear algebra libraries from [the Eigen development team](https://eigen.tuxfamily.org/index.php?title=Benchmark) and the results under "Gcbd benchmark" in [this github repository](https://github.com/andre-wojtowicz/blas-benchmarks), for example.
+
+
+## Part III: Doing it the right way
+
+Part I & II were simply designed to ~~torture you~~ illustrate how much an algorithm's performance depends on whether or not it respects an underlying representation of data.
+Neither of the approaches we've discussed, however, is the most effective way to multiply two matrices on modern hardware.
+Dedicated linear algebra libraries typically deploy _blocking_, dividing the matrices $\boldsymbol{A}$ and $\boldsymbol{B}$ into sub-matrices of appropriate size and carrying out multiplications block-wise.
+This approach is designed to minimize the data motion between CPU and RAM by re-using the same pieces of data as much as possible once they travel all the way from RAM to L1 cache.
+
+In practice, we of course shouldn't try to implement (let alone optimize) an operation ourselves when there already are efficient existing software libraries.
+(But, if you are interested in learning more about how the optimized matrix multiplication works, Sec 1.5.4. of Golub and Van Loan (2013) is a good place to start. Also, I found nice lecture slides on this topic [here](https://cs.brown.edu/courses/cs033/lecture/18cacheX.pdf).)
+The `matmat_via_eigen` function provided in `matmat_eigen.cpp` calls the matrix-matrix multiplication from [Eigen](https://eigen.tuxfamily.org/), a C++ linear algebra library, through RcppEigen.
+
+```{r, warning=FALSE}
+sourceCpp(file.path('src', 'matmat_eigen.cpp'))
+```
+
+```{r}
+# Check and benchmark
+```
