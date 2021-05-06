@@ -11,6 +11,7 @@ output:
       highlightStyle: github
       slideNumberFormat: "%current%"
       countIncrementalSlides: false
+      beforeInit: "macros.js"
     includes:
       before_body: mathjax_config.html
 ---
