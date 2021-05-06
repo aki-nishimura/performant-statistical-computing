@@ -856,3 +856,56 @@ That said, there still are (relatively) easy, indirect accesses to multi-threadi
 
 <img src="figure/parallelization/python_multi_threading.png" alt="" class="center" style="width: 75%;"/>
 
+---
+class: middle, center, inverse
+
+# Summary & References
+
+---
+
+# References: hardware and computing
+.pull-left[
+  ![:image right, 80%](figure/reference/medium_logo.png)
+  ![:vspace -1ex]
+]
+
+![:image right, 70%](figure/reference/stack_overflow_logo.png)
+![:vspace -.5ex]
+
+![:image left, 45%](figure/reference/google_logo.png)
+![:vspace 3ex]
+
+![:image right, 60%](figure/reference/geeksforgeeks_logo.png)
+
+---
+
+# References: R and Python how-to
+
+###R and Rcpp
+
+_Advanced R_:&thinsp; Rewriting R code in C++ <br>
+$\quad$ https://adv-r.hadley.nz/rcpp.html#rcpp
+
+_R Packages_:&thinsp; Compiled code &mdash; https://r-pkgs.org/src.html
+<!-- https://r-pkgs.org/src.html -->
+
+Rcpp page: http://dirk.eddelbuettel.com/code/rcpp.html
+
+Rcpp Gallery: https://gallery.rcpp.org/
+
+### Python
+
+_High Performance Python: <br> $\quad$ Practical Performant Programming for Humans_
+
+---
+
+# References: CPU/GPU parallelization
+
+![:vspace 3ex]
+"Understanding GPU programming for statistical computation: Studies in massively parallel massive mixtures." Suchard et. al. (2010).
+<br> $\quad$ https://doi.org/10.1198/jcgs.2010.10016
+
+![:vspace 3ex]
+"Vector operations for accelerating expensive Bayesian computations &mdash; a tutorial guide."&thinsp; Warne et. al. (2021).<br> 
+$\quad$ https://doi.org/10.1214/21-BA1265
+
