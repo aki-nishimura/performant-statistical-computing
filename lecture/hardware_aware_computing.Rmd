@@ -720,3 +720,138 @@ $\quad$ .large[**Actual over theoretical performance**]
 
 <img src="figure/computing_at_low_level/highest_hpcg_to_peak_ratio_among_top500_Nov_2020.jpeg" alt="" class="center" style="width: 100%;"/>
 
+---
+class: center, middle, inverse
+
+# Different flavors of parallel computing
+
+---
+
+# Parallelization: no-brainer in theory, but...
+
+![](figure/parallelization/serial_vs_parallel_computing.png)
+---
+
+# Parallelization: no-brainer in theory, but...
+
+![](figure/parallelization/effect_of_parallelization_overhead.jpeg)
+
+---
+
+# Types of parallelization opportunities
+
+### Inherently independent tasks
+<p style="opacity:0"> 
+* Bootstrap and cross-validation
+* Observational study with multiple exposure-outcomes
+</p>
+
+### Serial task with parallelizable components
+<p style="opacity:0"> 
+* Maximizing likelihood via (stochastic) gradient descent
+* Markov chain Monte Carlo with lots of linear algebra
+</p>
+
+---
+
+# Types of parallelization opportunities
+
+### Inherently independent tasks
+* Bootstrap and cross-validation
+* Observational study with multiple exposure-outcomes
+
+### Serial task with parallelizable components
+* Maximizing likelihood via (stochastic) gradient descent
+* Markov chain Monte Carlo with lots of linear algebra
+
+--
+
+**Note:** <p style="margin-top: -.5ex;">  </p>
+* Many problems are hybrids of the two kinds.
+* Even seemingly indepenent tasks may be done more efficiently together or with shared resources.
+
+---
+
+# Types of parallelization opportunities
+
+### Inherently independent tasks ("coarse-scale" parallelization)
+* Bootstrap and cross-validation
+* Observational study with multiple exposure-outcomes
+
+### Serial task with parallelizable components ("fine-scale")
+* Maximizing likelihood via (stochastic) gradient descent
+* Markov chain Monte Carlo with lots of linear algebra
+
+**Note:** <p style="margin-top: -.5ex;">  </p>
+* Many problems are hybrids of the two kinds.
+* Even seemingly indepenent tasks may be done more efficiently together or with shared resources.
+
+---
+
+# Multi-threading vs -processing
+
+![](figure/parallelization/multi_threading_vs_processing.png)
+
+**Rule of thumb:** For typical stat computing problems,
+* multi-threading necessary for "fine" parallel tasks.
+* multi-processing good enough for "coarse" ones. 
+
+---
+
+# Threads share resources, processes don't
+
+![](figure/parallelization/multi_threading_vs_processing.png)
+
+Processes &mdash; more expensive to set up ( $=$ _more overhead_ )
+
+Threads &mdash; "lightweight processes," sharing memory and capable of exchanging (but also of corrupting) data
+
+---
+
+# What's involved in multi-processing set-up
+
+<p style="margin-top: 3ex;"> </p>
+<img src="figure/parallelization/multi_processing_via_psock.png" alt="" class="center" style="width: 75%;"/>
+<p style="margin-top: 2ex;"> </p>
+<!-- https://www.blasbenito.com/post/02_parallelizing_loops_with_r/ -->
+
+When you call&thinsp; `foreach(...) %dopar% {...}`, new R instances are launched and all the variables are copied.
+
+---
+
+# What's involved in multi-processing set-up
+
+<p style="margin-top: 3ex;"> </p>
+<img src="figure/parallelization/multi_processing_via_fork.png" alt="" class="center" style="width: 55%;"/>
+<p style="margin-top: 2ex;"> </p>
+
+Actually, there are multiple backends for multi-processing, w/ `fork` (Unix only) and `socket` available in R `parallel`.
+
+---
+
+# Major bummer warning: no multi-threading in (pure) R or Python!
+
+R/Python interpreters dot **not** deal with mulitple threads, so interfacing with C/C++/Fortran is the only way around.
+
+---
+
+# Major bummer warning: no multi-threading in (pure) R or Python!
+
+That said, there still are (relatively) easy, indirect accesses to multi-threading you can exploit when using R/Python:
+
+* Packages you use might be multi-threaded via C/C++.<br>
+  * Watch for options to specify the number of cores, e.g. `stan(..., cores = 4)`.
+  * But set `logical = FALSE`&thinsp; in `detectCores()`!
+
+--
+* If you built R/Python with an optimized BLAS library, then many linear algebra ops are multi-threaded.
+
+--
+* For some packages (e.g. `RcppEigen`), you only need to specify right compiler flags in `Makevars(.win)` file. 
+
+---
+
+# Word of caution: don't get fooled by "threading" module in Python
+
+<img src="figure/parallelization/python_multi_threading.png" alt="" class="center" style="width: 75%;"/>
+
