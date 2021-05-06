@@ -41,6 +41,11 @@ pre {
     margin-left: 0px;
 }
 
+a, a > code {
+  color: #002D72; /* JHU Heritage blue */
+  text-decoration: none; /* turns off background coloring of links */
+}
+
 img.center {
   display: block;
   margin-left: auto;
