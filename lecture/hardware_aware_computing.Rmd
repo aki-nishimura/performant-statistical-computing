@@ -493,6 +493,8 @@ Viewed as adding up cols of $\bm{A}$ multiplied by entries of $\bm{x}$:
 
 <p style="margin-top:-.5ex;"> </p>
 
+--
+
 .pull-left[
 ```{r, eval=FALSE}
 # Row-oriented matvec
@@ -860,6 +862,51 @@ That said, there still are (relatively) easy, indirect accesses to multi-threadi
 class: middle, center, inverse
 
 # Summary & References
+
+## Hardware aware computing
+
+---
+
+# Summary: optimize, but only as warranted
+
+<blockquote>
+<p style="margin-top:10ex; font-size:24pt; font-family:garamond; font-style:italic;">
+Rules of Optimization:<br>
+Rule 1: Don't do it.<br>
+Rule 2 (for experts only): Don't do it yet.
+</p>
+</blockquote>
+
+<p style="margin-top:1ex; font-size:25pt; font-family:'Times New Roman';", class="right"> &mdash; Michael A. Jackson </p>
+
+---
+
+# Summary: effects of hardware design
+
+We looked at inner workings of computer to ...
+* Build intuition on why some code runs faster
+  * How variable type info is used
+  * When instructions can be pipelined
+  * Et cetera, et cetera, et cetera, ...
+--
+
+* Appreciate its complexity:
+  * Simplified picture is valuable but has its limits
+  * Be systematic in identifying perf. bottleneck
+
+---
+
+# Summary: effects of hardware design
+
+Data motaion $\ge$ arithmetic op counts
+* Cache miss and latency have massive impacts on computational speed.
+* Work with data that are near-by in memory for efficient data access (and hence efficient computation).
+
+--
+
+Parallelization
+* Mind the overheads
+* Fine-scale one requires more thoughts/work
 
 ---
 
