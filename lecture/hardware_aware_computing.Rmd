@@ -596,7 +596,7 @@ sourceCpp(file.path('src', 'matvec.cpp'))
 ```
 
 ```{r, comment='', echo=FALSE}
-cat(readLines(file.path('src', 'matvec.cpp'))[6:17], sep = '\n')
+cat(readLines(file.path('src', 'matvec.cpp'))[6:21], sep = '\n')
 ```
 
 ---
@@ -608,7 +608,7 @@ sourceCpp(file.path('src', 'matvec.cpp'))
 ```
 
 ```{r, comment='', echo=FALSE}
-cat(readLines(file.path('src', 'matvec.cpp'))[20:31], sep = '\n')
+cat(readLines(file.path('src', 'matvec.cpp'))[24:39], sep = '\n')
 ```
 
 ---

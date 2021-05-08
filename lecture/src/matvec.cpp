@@ -6,10 +6,14 @@ using Rcpp::NumericVector;
 NumericVector row_oriented_matvec_c(
     const NumericMatrix& A, const NumericVector& v
   ) {
-  int n = v.size();
-  NumericVector result(n);
-  for (int i = 0; i < n; ++i) {
-    for (int j = 0; j < n; ++j) {
+  int n_row = A.nrow();
+  int n_col = A.ncol();
+  if (n_row != v.size()) {
+    Rcpp::stop("Incompatible dimensions");
+  }
+  NumericVector result(n_row);
+  for (int i = 0; i < n_row; ++i) {
+    for (int j = 0; j < n_col; ++j) {
       result[i] += A(i, j) * v[j];
     }
   }
@@ -20,10 +24,14 @@ NumericVector row_oriented_matvec_c(
 NumericVector col_oriented_matvec_c(
     const NumericMatrix& A, const NumericVector& v
   ) {
-  int n = v.size();
-  NumericVector result(n);
-  for (int j = 0; j < n; ++j) {
-    for (int i = 0; i < n; ++i) {
+  int n_row = A.nrow();
+  int n_col = A.ncol();
+  if (n_row != v.size()) {
+    Rcpp::stop("Incompatible dimensions");
+  }
+  NumericVector result(n_row);
+  for (int j = 0; j < n_col; ++j) {
+    for (int i = 0; i < n_row; ++i) {
       result[i] += A(i, j) * v[j];
     }
   }
