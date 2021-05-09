@@ -912,17 +912,17 @@ Parallelization
 
 # References: hardware and computing
 .pull-left[
-  ![:image right, 80%](figure/reference/medium_logo.png)
+  ![:image 80%, right](figure/reference/medium_logo.png)
   ![:vspace -1ex]
 ]
 
-![:image right, 70%](figure/reference/stack_overflow_logo.png)
+![:image 70%, right](figure/reference/stack_overflow_logo.png)
 ![:vspace -.5ex]
 
-![:image left, 45%](figure/reference/google_logo.png)
+![:image 45%, left](figure/reference/google_logo.png)
 ![:vspace 3ex]
 
-![:image right, 60%](figure/reference/geeksforgeeks_logo.png)
+![:image 60%, right](figure/reference/geeksforgeeks_logo.png)
 
 ---
 

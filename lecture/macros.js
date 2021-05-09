@@ -1,4 +1,4 @@
-remark.macros.image = function (alignment, percentage = '100%') {
+remark.macros.image = function (percentage = '100%', alignment = 'center') {
   var url = this;
   return '<img src="' + url + '" class="' + alignment + '" style="width: ' + percentage + '" />';
 };
