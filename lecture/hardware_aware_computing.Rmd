@@ -746,7 +746,7 @@ class: center, middle, inverse
 ### Inherently independent tasks
 <p style="opacity:0"> 
 * Bootstrap and cross-validation
-* Observational study with multiple exposure-outcomes
+* Regression with multiple outcomes
 </p>
 
 ### Serial task with parallelizable components
@@ -761,7 +761,7 @@ class: center, middle, inverse
 
 ### Inherently independent tasks
 * Bootstrap and cross-validation
-* Observational study with multiple exposure-outcomes
+* Regression with multiple outcomes
 
 ### Serial task with parallelizable components
 * Maximizing likelihood via (stochastic) gradient descent
@@ -779,7 +779,7 @@ class: center, middle, inverse
 
 ### Inherently independent tasks ("coarse-scale" parallelization)
 * Bootstrap and cross-validation
-* Observational study with multiple exposure-outcomes
+* Regression with multiple outcomes
 
 ### Serial task with parallelizable components ("fine-scale")
 * Maximizing likelihood via (stochastic) gradient descent
@@ -934,11 +934,14 @@ _Advanced R_:&thinsp; Rewriting R code in C++ <br>
 $\quad$ https://adv-r.hadley.nz/rcpp.html#rcpp
 
 _R Packages_:&thinsp; Compiled code &mdash; https://r-pkgs.org/src.html
-<!-- https://r-pkgs.org/src.html -->
+
+--
 
 Rcpp page: http://dirk.eddelbuettel.com/code/rcpp.html
 
 Rcpp Gallery: https://gallery.rcpp.org/
+
+--
 
 ### Python
 
