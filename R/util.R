@@ -39,8 +39,9 @@ simulate_sparse_binary_design <- function(n_obs, n_pred, density, seed = NULL) {
   n_obs <- floor(n_obs)
   n_pred <- floor(n_pred)
   n_nonzero <- as.integer(n_obs * n_pred * density)
-  row_index <- sample.int(n_obs, n_nonzero, replace = TRUE)
-  col_index <- sample.int(n_pred, n_nonzero, replace = TRUE)
+  nnz_linear_index <- sample(n_obs * n_pred, n_nonzero, replace = FALSE)
+  row_index <- nnz_linear_index %% n_obs + 1
+  col_index <- (nnz_linear_index - 1) %/% n_obs + 1
   design_mat <- sparseMatrix(
     i = row_index, j = col_index, x = 1, dims = c(n_obs, n_pred)
   )
