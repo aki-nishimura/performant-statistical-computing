@@ -30,10 +30,20 @@ simulate_sparse_binary_design <- function(n_obs, n_pred, density, seed = NULL) {
   if (!is.null(seed)) {
     set.seed(seed)
   }
+  if (density < 0 || density > 1) {
+    stop("Density must be between 0 and 1")
+  }
+  if (n_obs < 1 || n_pred < 1) {
+    stop("Number of observations and predictors must be larger than 1")
+  }
+  n_obs <- floor(n_obs)
+  n_pred <- floor(n_pred)
   n_nonzero <- as.integer(n_obs * n_pred * density)
   row_index <- sample.int(n_obs, n_nonzero, replace = TRUE)
   col_index <- sample.int(n_pred, n_nonzero, replace = TRUE)
-  design_mat <- sparseMatrix(i = row_index, j = col_index, x = 1)
+  design_mat <- sparseMatrix(
+    i = row_index, j = col_index, x = 1, dims = c(n_obs, n_pred)
+  )
   return(design_mat)
 }
 
