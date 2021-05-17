@@ -8,7 +8,7 @@ NumericVector row_oriented_matvec_c(
   ) {
   int n_row = A.nrow();
   int n_col = A.ncol();
-  if (n_row != v.size()) {
+  if (n_col != v.size()) {
     Rcpp::stop("Incompatible dimensions");
   }
   NumericVector result(n_row);
@@ -26,7 +26,7 @@ NumericVector col_oriented_matvec_c(
   ) {
   int n_row = A.nrow();
   int n_col = A.ncol();
-  if (n_row != v.size()) {
+  if (n_col != v.size()) {
     Rcpp::stop("Incompatible dimensions");
   }
   NumericVector result(n_row);
