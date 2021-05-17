@@ -26,7 +26,9 @@ summarize_benchmark <- function(bench_output, include_expression = FALSE) {
   }
 }
 
-simulate_sparse_binary_design <- function(n_obs, n_pred, density, seed = NULL) {
+simulate_sparse_binary_design <- function(
+    n_obs, n_pred, density, repr = "C", seed = NULL
+  ) {
   if (!is.null(seed)) {
     set.seed(seed)
   }
@@ -43,7 +45,7 @@ simulate_sparse_binary_design <- function(n_obs, n_pred, density, seed = NULL) {
   row_index <- nnz_linear_index %% n_obs + 1
   col_index <- (nnz_linear_index - 1) %/% n_obs + 1
   design_mat <- sparseMatrix(
-    i = row_index, j = col_index, x = 1, dims = c(n_obs, n_pred)
+    i = row_index, j = col_index, x = 1, dims = c(n_obs, n_pred), repr = repr
   )
   return(design_mat)
 }
