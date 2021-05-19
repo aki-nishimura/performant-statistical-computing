@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="170mm"
+   height="120mm"
+   viewBox="0 0 170 120"
+   version="1.1"
+   id="svg8"
+   inkscape:version="1.0.2 (e86c8708, 2021-01-15)"
+   sodipodi:docname="stats_software_computing_triad.svg"
+   inkscape:export-filename="/Users/aki/triad.png"
+   inkscape:export-xdpi="300"
+   inkscape:export-ydpi="300">
+  <defs
+     id="defs2">
+    <rect
+       x="178.78275"
+       y="137.20535"
+       width="187.2872"
+       height="135.50446"
+       id="rect949" />
+    <rect
+       x="142.686"
+       y="120.76339"
+       width="154.21429"
+       height="125.67708"
+       id="rect871" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.4"
+     inkscape:cx="225.61532"
+     inkscape:cy="264.78411"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     inkscape:document-rotation="0"
+     showgrid="false"
+     inkscape:snap-bbox="true"
+     inkscape:snap-global="true"
+     inkscape:snap-bbox-edge-midpoints="true"
+     inkscape:bbox-nodes="false"
+     inkscape:snap-bbox-midpoints="false"
+     inkscape:window-width="1768"
+     inkscape:window-height="1107"
+     inkscape:window-x="658"
+     inkscape:window-y="201"
+     inkscape:window-maximized="0" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <circle
+       style="fill:#ffda00;fill-opacity:0.341176;stroke:#806d00;stroke-width:0.35135;stroke-opacity:0.66000003"
+       id="path833"
+       cx="-107.7014"
+       cy="19.429869"
+       transform="matrix(-0.75059092,-0.66076719,0.65189361,-0.75831044,0,0)"
+       rx="29.790108"
+       ry="29.839123" />
+    <circle
+       style="fill:#00ffda;fill-opacity:0.341176;stroke:#00806d;stroke-width:0.35101214;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.66000003"
+       id="circle837"
+       cx="-72.118774"
+       cy="19.429869"
+       transform="matrix(-0.75059092,-0.66076719,0.65189361,-0.75831044,0,0)"
+       rx="29.790108"
+       ry="29.839123" />
+    <text
+       xml:space="preserve"
+       style="font-size:9.29277px;line-height:1.25;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';stroke-width:0.290399"
+       x="3.3836496"
+       y="13.882577"
+       id="text855"><tspan
+         sodipodi:role="line"
+         id="tspan853"
+         x="3.3836496"
+         y="13.882577"
+         style="font-size:10.0672px;stroke-width:0.290399">Statistics</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:11.6159px;line-height:0;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';stroke-width:0.290399"
+       x="77.260178"
+       y="102.85537"
+       id="text859"><tspan
+         sodipodi:role="line"
+         id="tspan857"
+         x="77.260178"
+         y="102.85537"
+         style="font-size:10.0672px;line-height:1;stroke-width:0.290399">Software</tspan><tspan
+         sodipodi:role="line"
+         x="77.260178"
+         y="112.92257"
+         style="font-size:10.0672px;line-height:1;stroke-width:0.290399"
+         id="tspan861">  engineering</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:11.6159px;line-height:1.25;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';stroke-width:0.290399"
+       x="118.52457"
+       y="33.957016"
+       id="text865"><tspan
+         sodipodi:role="line"
+         id="tspan863"
+         x="118.52457"
+         y="33.957016"
+         style="font-size:10.0672px;stroke-width:0.290399">Computing</tspan></text>
+    <text
+       xml:space="preserve"
+       id="text869"
+       style="font-size:10.58329999999999949px;line-height:1.25;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';white-space:pre;shape-inside:url(#rect871);" />
+    <text
+       xml:space="preserve"
+       style="font-size:4.64638px;line-height:1.25;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';stroke-width:0.290399"
+       x="7.8917451"
+       y="21.764832"
+       id="text877"><tspan
+         sodipodi:role="line"
+         id="tspan875"
+         x="7.8917451"
+         y="21.764832"
+         style="font-size:4.64638px;stroke-width:0.290399">Uncertainty</tspan><tspan
+         sodipodi:role="line"
+         x="7.8917451"
+         y="27.572807"
+         style="font-size:4.64638px;stroke-width:0.290399"
+         id="tspan887">Data quality</tspan><tspan
+         sodipodi:role="line"
+         x="7.8917451"
+         y="33.380783"
+         style="font-size:4.64638px;stroke-width:0.290399"
+         id="tspan885">Causality</tspan><tspan
+         sodipodi:role="line"
+         x="7.8917451"
+         y="39.188755"
+         style="font-size:4.64638px;stroke-width:0.290399"
+         id="tspan943">Programming</tspan><tspan
+         sodipodi:role="line"
+         x="7.8917451"
+         y="44.996731"
+         style="font-size:4.64638px;stroke-width:0.290399"
+         id="tspan881" /></text>
+    <text
+       xml:space="preserve"
+       style="font-size:4.64638px;line-height:1.25;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';stroke-width:0.290399"
+       x="25.347895"
+       y="97.107277"
+       id="text893"><tspan
+         sodipodi:role="line"
+         x="25.347895"
+         y="97.107277"
+         style="font-size:4.64638px;stroke-width:0.290399"
+         id="tspan917">Testing</tspan><tspan
+         sodipodi:role="line"
+         x="25.347895"
+         y="102.91525"
+         style="font-size:4.64638px;stroke-width:0.290399"
+         id="tspan1494">Integration</tspan><tspan
+         sodipodi:role="line"
+         x="25.347895"
+         y="108.72323"
+         style="font-size:4.64638px;stroke-width:0.290399"
+         id="tspan929">Flexiblity/maintainability</tspan><tspan
+         sodipodi:role="line"
+         x="25.347895"
+         y="114.5312"
+         style="font-size:4.64638px;stroke-width:0.290399"
+         id="tspan933">Continous development</tspan><tspan
+         sodipodi:role="line"
+         x="25.347895"
+         y="120.33918"
+         style="font-size:4.64638px;stroke-width:0.290399"
+         id="tspan895" /></text>
+    <text
+       xml:space="preserve"
+       style="font-size:4.64638px;line-height:1.25;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';stroke-width:0.290399"
+       x="128.27367"
+       y="42.046703"
+       id="text905"><tspan
+         sodipodi:role="line"
+         x="128.27367"
+         y="42.046703"
+         style="font-size:4.64638px;stroke-width:0.290399"
+         id="tspan907">Algorithm choice</tspan><tspan
+         sodipodi:role="line"
+         x="128.27367"
+         y="47.854679"
+         style="font-size:4.64638px;stroke-width:0.290399"
+         id="tspan911">Computational/</tspan><tspan
+         sodipodi:role="line"
+         x="128.27367"
+         y="53.662655"
+         style="font-size:4.64638px;stroke-width:0.290399"
+         id="tspan935">    memory efficiency</tspan><tspan
+         sodipodi:role="line"
+         x="128.27367"
+         y="59.470627"
+         style="font-size:4.64638px;stroke-width:0.290399"
+         id="tspan915">Parallelization</tspan><tspan
+         sodipodi:role="line"
+         x="128.27367"
+         y="65.278603"
+         style="font-size:4.64638px;stroke-width:0.290399"
+         id="tspan913" /><tspan
+         sodipodi:role="line"
+         x="128.27367"
+         y="71.086578"
+         style="font-size:4.64638px;stroke-width:0.290399"
+         id="tspan909" /></text>
+    <text
+       xml:space="preserve"
+       id="text947"
+       style="font-size:4.93888999999999978px;line-height:1.25;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';white-space:pre;shape-inside:url(#rect949);" />
+    <circle
+       style="opacity:0.995;fill:#e133ff;fill-opacity:0.341176;stroke:#711980;stroke-width:0.36012;stroke-opacity:0.67"
+       id="path875"
+       cx="38.175045"
+       cy="83.055122"
+       r="29.666571"
+       transform="rotate(-15.996154)" />
+    <circle
+       style="opacity:0.995;fill:#ffda00;fill-opacity:0.34;stroke:#806d00;stroke-width:0.36012;stroke-opacity:0.67"
+       id="circle877"
+       cx="74.371674"
+       cy="83.055122"
+       r="29.666571"
+       transform="rotate(-15.996154)" />
+    <circle
+       style="opacity:0.995;fill:#00ffda;fill-opacity:0.341176;stroke:#00806d;stroke-width:0.36012;stroke-opacity:0.67"
+       id="circle879"
+       cx="56.273354"
+       cy="50.033478"
+       r="29.666571"
+       transform="rotate(-15.996154)" />
+  </g>
+</svg>
