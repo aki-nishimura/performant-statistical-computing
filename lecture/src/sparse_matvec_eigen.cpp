@@ -11,14 +11,14 @@ template <typename MappedSparseMatrix>
 bool check_dim_compatible(
     const MappedSparseMatrix A, const Map<VectorXd> v, bool transposed
   ) {
-  bool is_incompatible;
+  bool is_compatible;
   if (transposed) {
-    is_incompatible = (A.rows() != v.size());
+    is_compatible = (A.rows() == v.size());
   } else {
-    is_incompatible = (A.cols() != v.size());
+    is_compatible = (A.cols() == v.size());
   }
-  if (is_incompatible) Rcpp::stop("Incompatible dimensions");
-  return is_incompatible;
+  if (!is_compatible) Rcpp::stop("Incompatible dimensions");
+  return is_compatible;
 }
 
 // [[Rcpp::export]]
