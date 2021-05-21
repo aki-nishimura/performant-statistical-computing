@@ -305,34 +305,6 @@ X@x[colj_start:colj_end]
 
 ---
 
-# Compressed sparse formats for computing
-
-CSR/CSC format provides efficient access to each row/col:
-
-```{r}
-j <- 1
-colj_start <- X@p[j] + 1
-colj_end <- X@p[j + 1]
-```
-
-```{r, eval=FALSE}
-data.frame(
-  colj_ind = X@i[colj_start:colj_end] + 1L,
-  colj_val = X@x[colj_start:colj_end]
-)
-```
-
-```{r, echo=FALSE}
-colj_table <- as.matrix(data.frame(
-  colj_ind = X@i[colj_start:colj_end] + 1L,
-  colj_val = X@x[colj_start:colj_end]
-))
-row.names(colj_table) <- rep('', nrow(colj_table))
-colj_table
-```
-
----
-
 # Right format for right computing purpose
 
 ### Example: CSC for $\ell_1$-regularized regression via coordinate descent
