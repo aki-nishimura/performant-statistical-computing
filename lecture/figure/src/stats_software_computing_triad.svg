@@ -51,10 +51,10 @@
      inkscape:snap-bbox-edge-midpoints="true"
      inkscape:bbox-nodes="false"
      inkscape:snap-bbox-midpoints="false"
-     inkscape:window-width="1768"
-     inkscape:window-height="1107"
-     inkscape:window-x="658"
-     inkscape:window-y="201"
+     inkscape:window-width="2560"
+     inkscape:window-height="1440"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
      inkscape:window-maximized="0" />
   <metadata
      id="metadata5">
@@ -233,7 +233,7 @@
        id="text947"
        style="font-size:4.93888999999999978px;line-height:1.25;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';white-space:pre;shape-inside:url(#rect949);" />
     <circle
-       style="opacity:0.995;fill:#e133ff;fill-opacity:0.341176;stroke:#711980;stroke-width:0.36012;stroke-opacity:0.67"
+       style="opacity:0.995;fill:#e54cff;fill-opacity:0.341176;stroke:#711980;stroke-width:0.36;stroke-opacity:0.67;stroke-miterlimit:4;stroke-dasharray:none"
        id="path875"
        cx="38.175045"
        cy="83.055122"
