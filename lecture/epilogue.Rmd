@@ -1,0 +1,50 @@
+---
+title: 'Post "Performant Statistical Computing and Algoware Development" World'
+subtitle: "when real journey starts"
+author: "Aki Nishimura"
+date: "`r Sys.Date()`"
+output:
+  xaringan::moon_reader:
+    css: ["default", "default-fonts", "extra.css"]
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      slideNumberFormat: "%current%"
+      countIncrementalSlides: false
+      beforeInit: "macros.js"
+    includes:
+      before_body: mathjax_config.html
+---
+
+# Software eng/Computing: increasingly<br> $\hspace{8em}$ relevant skills
+
+![:vspace -5ex]
+![:image 100%, right](figure/stats_software_computing_triad.png)
+
+---
+
+# "Big data" are complex data
+
+![:image 90%](figure/data_size_vs_complexity.png)
+
+---
+
+# Keep learning, achieve more
+
+<blockquote>
+<p style="margin-top:6ex; font-size:24pt; font-family:garamond; font-style:italic;">
+Knowledge and productivity are like compound interest. ....
+<br>
+<br>
+The more you know, the more you learn; the more you learn, the more you can do; the more you can do, the more the opportunity - it is very much like compound interest.
+</p>
+</blockquote>
+
+<p style="margin-top:1ex; font-size:25pt; font-family:'Times New Roman';", class="right"> &mdash; Richard Hamming </p>
+
+---
+class: center, middle, inverse
+
+# Verbum sap (= enough said)
+
+## Thank you for taking the class!
