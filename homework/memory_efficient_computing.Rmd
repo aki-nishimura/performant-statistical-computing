@@ -1,0 +1,144 @@
+---
+title: 'Homework: memory efficient computing'
+output:
+  html_document:
+    df_print: paged
+header-includes:
+  - \newcommand{\bm}{\boldsymbol}
+---
+
+```{r setup, echo=FALSE}
+source(file.path("..", "R", "util.R"))
+source(file.path("..", "R", "colors.R"))
+
+required_packages <- c('Matrix', 'Rcpp', 'testit')
+install_and_load_packages(required_packages)
+```
+
+
+# Problem 1: CSC/CSR matrix-vector multiplication
+Implement an R function for multiplying a `Matrix` class's `dgCMatrix` and `dgRMatrix` with a vector. 
+(This is obviously just for a didactic purpose; in practice, you are better off using the `Matrix`'s built-in `%*%` or RcppEigen.)
+
+```{r}
+csc_matvec <- function(col_indices, index_pointers, vals, v) {
+  # Fill in
+}
+
+csr_matvec <- function(row_indices, index_pointers, vals, v) {
+  # Fill in
+}
+```
+
+```{r}
+n_obs <- 1024L
+n_pred <- 1024L
+density <- 0.05
+X_csc <- simulate_sparse_binary_design(n_obs, n_pred, density, repr = "C")
+X_csr <- sparseMatrix(
+  i = X_csc@i, p = X_csc@p, x = X_csc@x, repr = "R",
+  index1 = FALSE # Use 0-based (instead of 1-based) indexing 
+) # Can't find an off-the-shelf function for conversion between dgCMatrix and dgRMatrix.
+v <- rnorm(n_pred)
+
+assert(
+  "Outputs from the two CSC-matvec implementations agree.",
+  are_all_close(
+    csr_matvec(X_csc@j, X_csc@p, X_csc@x, v),
+    as.vector(X_csc %*% v)
+  )
+)
+
+assert(
+  "Outputs from the two CSR-matvec implementations agree.",
+  are_all_close(
+    csr_matvec(X_csr@j, X_csr@p, X_csr@x, v),
+    as.vector(X_csr %*% v)
+  )
+)
+```
+
+
+# Problem 2: There is more to ~~life~~ computing than counting the number of arithmetic operations --- examples from sparse matrix multiplication
+In this problem, we investigate how well the number of arithmetic operations --- conventional metric for judging algorithmic efficiency --- corresponds to an actual computing performance.
+Those of you without a reasonably optimized BLAS library configured with R should use the RcppEigen functions for dense matrix multiplications.
+(For sparse matrix multiplications, the `Matrix` class's `%*%` with `dgCMatrix` is actually not far behind RcppEigen's on my computer, but your mileage may vary.)
+
+## Part 1
+Write an Rcpp function to multiply a dense matrix $\bm{A}$ with vector $\bm{v}$ using the `RcppEigen` library.
+To this end, you can use the `sparse_matvec_eigen.cpp` from the lecture as a starting point and do a bit of Googling as needed to figure out how you should modify it.
+(You don't need to change much.)
+
+```{r}
+# Source the Rcpp function
+Rcpp::sourceCpp(file.path('src', 'matvec_eigen.cpp'), rebuild = TRUE)
+Rcpp::sourceCpp(file.path('..', 'lecture', 'src', 'sparse_matvec_eigen.cpp'))
+```
+
+## Part 2
+Measure speed of sparse matrix-vector multiplications at varying sparsity level.
+Then compare these results to dense matvec speed.
+If the computational time is directly proportional to the number of arithmetic operations, then sparse matvecs at any sparsity level should be faster than dense matvec.
+But is that really the case in practice?
+
+```{r}
+measure_matvec_speed <- function(n_obs, n_pred, density) {
+  X <- simulate_sparse_binary_design(n_obs, n_pred, density)
+  v <- rnorm(n_pred)
+  # Fill in
+}
+```
+
+```{r}
+n_obs <- 8192L
+n_pred <- 1024L
+density_list <- 0.005 * 2^seq(0, 7)
+
+comp_time <- sapply(
+  density_list, 
+  function(density) measure_matvec_speed(n_obs, n_pred, density)
+)
+
+plot(
+  density_list, comp_time, log="xy",
+  col = jhu_color$heritageBlue,
+  frame.plot = F
+)
+
+# Measure speed of matvec by a dense matrix of the same size & Plot a reference line
+# Fill in
+abline(
+  # Fill in
+  col = jhu_color$spiritBlue,
+  lty = 'dashed'
+)
+```
+
+**Note:** Dense matvec is _a lot_ easier to multi-thread (from hardware perspective) than sparse matvec and thus benefit more from parallelization in general.
+
+## Part 3
+We now consider varying the size and density of a sparse matrix so that the number of non-zero elements --- and hence of required arithmetic operations for matrix-vector operations --- remains constant.
+In other words, matrices become sparser as they become larger.
+Compare the speed of matvec operations across these sparse matrices of varying size and density.
+
+```{r}
+base_value <- list(
+  n_obs = 1024L,
+  n_pred = 1024L,
+  density = 0.256
+)
+exponent_list <- seq(0, 8)
+density_list <- base_value$density / 2^exponent_list
+
+comp_time <- sapply(
+  exponent_list, 
+  function(expo) {
+    # Fill in
+    return(measure_matvec_speed(n_obs, n_pred, density))
+  }
+)
+
+plot(density_list, comp_time)
+```
+
+ 
